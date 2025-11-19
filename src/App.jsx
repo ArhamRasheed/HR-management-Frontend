@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "../pages/login";
 import Dashboard from "../pages/Dashboard";
+import Contact from "../pages/Contact";
+import About from "../pages/About";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -36,6 +38,14 @@ function App() {
         <Route
           path="/dashboard/"
           element={user ? <Dashboard user={user} /> : <Navigate to="/login" />}
+        />
+        <Route 
+          path="/contact"
+          element={user ? <Contact user={user} /> : <Navigate to="/login" />}
+        />
+        <Route 
+          path="/about"
+          element={user ? <About user={user} /> : <Navigate to="/login" />}
         />
         {/* Default route */}
         <Route path="*" element={<Navigate to={user ? `/dashboard/` : "/login"} />} />

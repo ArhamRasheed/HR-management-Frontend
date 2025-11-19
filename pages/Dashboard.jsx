@@ -1,24 +1,37 @@
-import React, { useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import { Menu, X, User, Calendar, Shield, Clock, AlertCircle, Home, Users, FileText, Settings, LogOut, ChevronDown, ChevronRight, Briefcase, UserPlus, Mail, Phone, MapPin } from 'lucide-react';
+import About from './About';
+import Contact from './Contact';
+import { useNavigate } from 'react-router-dom';
 
 const API_BASE_URL = 'http://localhost:8000/api';
-let employeeData = null;
-fetch(`${API_BASE_URL}/dashboard`, {
-  method: 'GET',
-  credentials: 'include',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-})
-  .then(response => response.json())
-  .then(data => employeeData = data)
-  .catch(error => console.error('Error fetching employee data:', error));
+
 
 const Dashboard = () => {
+  const [data, setData] = useState(null);
+
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/dashboard/`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => response.json())
+      .then(res => {
+        setData(res);
+      })
+      .catch(error => console.error('Error fetching employee data:', error));
+  }, []);
+
+  
+
+  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activePage, setActivePage] = useState('dashboard');
   const [expandedMenus, setExpandedMenus] = useState({});
-
   // Sample data based on your backend response
 
   const handleLogOut = () => {
@@ -40,13 +53,9 @@ const Dashboard = () => {
       [menuKey]: !prev[menuKey]
     }));
   };
-
   const handleNavigation = (page) => {
     setActivePage(page);
-    // Here you would typically use React Router
-    // For now, we'll just show a placeholder message
-    console.log(`Navigating to: ${page}`);
-  };
+  }
 
   const StatCard = ({ icon: Icon, title, value, bgColor }) => (
     <div className={`${bgColor} rounded-lg p-6 shadow-md`}>
@@ -62,82 +71,6 @@ const Dashboard = () => {
     </div>
   );
 
-  const Contact = () => (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-2xl font-bold text-green-800 mb-6">Contact Us</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-4">
-          <div className="flex items-start space-x-3">
-            <Mail className="w-5 h-5 text-green-600 mt-1" />
-            <div>
-              <p className="font-semibold text-gray-800">Email</p>
-              <p className="text-gray-600">hr@company.com</p>
-              <p className="text-gray-600">support@company.com</p>
-            </div>
-          </div>
-          <div className="flex items-start space-x-3">
-            <Phone className="w-5 h-5 text-green-600 mt-1" />
-            <div>
-              <p className="font-semibold text-gray-800">Phone</p>
-              <p className="text-gray-600">+1 (555) 123-4567</p>
-              <p className="text-gray-600">+1 (555) 987-6543</p>
-            </div>
-          </div>
-          <div className="flex items-start space-x-3">
-            <MapPin className="w-5 h-5 text-green-600 mt-1" />
-            <div>
-              <p className="font-semibold text-gray-800">Office Address</p>
-              <p className="text-gray-600">123 Business Park</p>
-              <p className="text-gray-600">Suite 456, City, State 12345</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-green-50 p-6 rounded-lg">
-          <h3 className="font-semibold text-gray-800 mb-3">Office Hours</h3>
-          <div className="space-y-2 text-sm text-gray-600">
-            <p>Monday - Friday: 9:00 AM - 6:00 PM</p>
-            <p>Saturday: 10:00 AM - 2:00 PM</p>
-            <p>Sunday: Closed</p>
-          </div>
-          <div className="mt-4 pt-4 border-t border-green-200">
-            <h3 className="font-semibold text-gray-800 mb-2">HR Department</h3>
-            <p className="text-sm text-gray-600">For any HR-related queries, please reach out during office hours.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const About = () => (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-2xl font-bold text-green-800 mb-6">About HR Management System</h2>
-      <div className="prose max-w-none">
-        <p className="text-gray-700 mb-4">
-          Welcome to our comprehensive HR Management System. We are dedicated to streamlining human resource operations
-          and empowering organizations to manage their most valuable asset - their people.
-        </p>
-        <h3 className="text-xl font-semibold text-green-700 mb-3">Our Mission</h3>
-        <p className="text-gray-700 mb-4">
-          To provide innovative and efficient HR solutions that enable organizations to focus on growth while we handle
-          the complexities of workforce management, compliance, and employee engagement.
-        </p>
-        <h3 className="text-xl font-semibold text-green-700 mb-3">Key Features</h3>
-        <ul className="list-disc list-inside text-gray-700 space-y-2 mb-4">
-          <li>Comprehensive employee management</li>
-          <li>Automated leave and attendance tracking</li>
-          <li>Insurance and benefits administration</li>
-          <li>Complaint and grievance handling</li>
-          <li>Recruitment and candidate management</li>
-          <li>Department and designation management</li>
-        </ul>
-        <h3 className="text-xl font-semibold text-green-700 mb-3">Our Commitment</h3>
-        <p className="text-gray-700">
-          We are committed to providing a secure, reliable, and user-friendly platform that adapts to your organization's
-          unique needs. Our system is built with the latest technology to ensure data security and seamless performance.
-        </p>
-      </div>
-    </div>
-  );
 
   const DashboardContent = () => (
     <>
@@ -148,13 +81,13 @@ const Dashboard = () => {
             <User className="w-10 h-10" />
           </div>
           <div className="flex-1">
-            <h2 className="text-3xl font-bold">{employeeData.full_name}</h2>
+            <h2 className="text-3xl font-bold">{data.full_name}</h2>
             <div className="flex items-center space-x-6 mt-2">
-              <span className="text-green-100">{employeeData.designation}</span>
+              <span className="text-green-100">{data.designation}</span>
               <span className="text-green-100">•</span>
-              <span className="text-green-100">{employeeData.department}</span>
+              <span className="text-green-100">{data.department}</span>
               <span className="text-green-100">•</span>
-              <span className="text-green-100">Joined: {new Date(employeeData.date_of_joining).toLocaleDateString()}</span>
+              <span className="text-green-100">Joined: {new Date(data.date_of_joining).toLocaleDateString()}</span>
             </div>
           </div>
         </div>
@@ -163,9 +96,9 @@ const Dashboard = () => {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         <StatCard icon={Calendar} title="Leave Balance" value="15 Days" bgColor="bg-green-100" />
-        <StatCard icon={Shield} title="Active Policies" value={employeeData.insurances.length} bgColor="bg-green-50" />
+        <StatCard icon={Shield} title="Active Policies" value={data.insurances.length} bgColor="bg-green-50" />
         <StatCard icon={Clock} title="Hours This Week" value="42.5" bgColor="bg-green-100" />
-        <StatCard icon={AlertCircle} title="Open Complaints" value={employeeData.complaints.filter(c => c.status !== 'Resolved').length} bgColor="bg-green-50" />
+        <StatCard icon={AlertCircle} title="Open Complaints" value={data.complaints.filter(c => c.status !== 'Resolved').length} bgColor="bg-green-50" />
       </div>
 
       {/* Two Column Layout */}
@@ -177,7 +110,7 @@ const Dashboard = () => {
             Recent Leaves
           </h3>
           <div className="space-y-3">
-            {employeeData.leaves.map(leave => (
+            {data.leaves.map(leave => (
               <div key={leave.id} className="border-l-4 border-green-500 pl-4 py-2 bg-green-50 rounded">
                 <div className="flex justify-between items-start">
                   <div>
@@ -201,7 +134,7 @@ const Dashboard = () => {
             Insurance Policies
           </h3>
           <div className="space-y-3">
-            {employeeData.insurances.map(insurance => (
+            {data.insurances.map(insurance => (
               <div key={insurance.id} className="border border-green-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                 <div className="flex justify-between items-start mb-2">
                   <p className="font-semibold text-gray-800">{insurance.type}</p>
@@ -236,7 +169,7 @@ const Dashboard = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {employeeData.attendances.map((attendance, idx) => (
+              {data.attendances.map((attendance, idx) => (
                 <tr key={idx} className="hover:bg-gray-50">
                   <td className="px-4 py-3 text-sm text-gray-700">{attendance.date}</td>
                   <td className="px-4 py-3 text-sm text-gray-700">{attendance.check_in}</td>
@@ -261,7 +194,7 @@ const Dashboard = () => {
           Complaints & Requests
         </h3>
         <div className="space-y-3">
-          {employeeData.complaints.map(complaint => (
+          {data.complaints.map(complaint => (
             <div key={complaint.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
               <div className="flex-1">
                 <p className="font-semibold text-gray-800">{complaint.title}</p>
@@ -269,13 +202,13 @@ const Dashboard = () => {
               </div>
               <div className="flex items-center space-x-3">
                 <span className={`px-3 py-1 rounded-full text-xs font-medium ${complaint.priority === 'High' ? 'bg-red-100 text-red-700' :
-                    complaint.priority === 'Medium' ? 'bg-yellow-100 text-yellow-700' :
-                      'bg-blue-100 text-blue-700'
+                  complaint.priority === 'Medium' ? 'bg-yellow-100 text-yellow-700' :
+                    'bg-blue-100 text-blue-700'
                   }`}>
                   {complaint.priority}
                 </span>
                 <span className={`px-3 py-1 rounded-full text-xs font-medium ${complaint.status === 'Resolved' ? 'bg-green-100 text-green-700' :
-                    'bg-orange-100 text-orange-700'
+                  'bg-orange-100 text-orange-700'
                   }`}>
                   {complaint.status}
                 </span>
@@ -311,7 +244,9 @@ const Dashboard = () => {
         );
     }
   };
-
+  if (!data) {
+    return <div className="p-6 text-center text-gray-600">Loading...</div>;
+  }
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar */}
@@ -436,7 +371,7 @@ const Dashboard = () => {
 
           {/* About */}
           <button
-            onClick={() => handleNavigation('about')}
+            onClick={() => navigate('/about')}
             className={`flex items-center w-full px-6 py-3 hover:bg-green-700 transition-colors ${activePage === 'about' ? 'bg-green-700 border-l-4 border-green-400' : ''}`}
           >
             <FileText className="w-5 h-5 mr-3" />
@@ -445,7 +380,7 @@ const Dashboard = () => {
 
           {/* Contact */}
           <button
-            onClick={() => handleNavigation('contact')}
+            onClick={() => navigate('/contact')}
             className={`flex items-center w-full px-6 py-3 hover:bg-green-700 transition-colors ${activePage === 'contact' ? 'bg-green-700 border-l-4 border-green-400' : ''}`}
           >
             <Mail className="w-5 h-5 mr-3" />
@@ -478,11 +413,11 @@ const Dashboard = () => {
             </div>
             <div className="flex items-center space-x-4">
               <div className="text-right">
-                <p className="text-sm font-medium text-gray-700">{employeeData.full_name}</p>
-                <p className="text-xs text-gray-500">{employeeData.designation}</p>
+                <p className="text-sm font-medium text-gray-700">{data.full_name}</p>
+                <p className="text-xs text-gray-500">{data.designation}</p>
               </div>
               <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center text-white font-bold">
-                {employeeData.full_name.split(' ').map(n => n[0]).join('')}
+                {data.full_name.split(' ').map(n => n[0]).join('')}
               </div>
               <button className="text-gray-600 hover:text-green-600">
                 <LogOut onClick={handleLogOut} className="w-5 h-5" />
