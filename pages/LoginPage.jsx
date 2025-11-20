@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
   Mail,
   Lock,
@@ -8,55 +10,54 @@ import {
   Eye,
   EyeOff,
 } from "lucide-react";
-
-const API_BASE_URL = "http://localhost:8000";
+import { clearAuthFeedback, loginUser } from "../src/store/slices/authSlice";
 
 const LoginPage = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const emailRef = useRef(null);
+  const passwordRef = useRef(null);
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setError("");
-    setSuccess("");
-    setLoading(true);
+  const { loading, error, isAuthenticated, statusMessage } = useSelector(
+    (state) => state.auth
+  );
 
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/login/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ email, password }),
-      });
+  useEffect(() => {
+    if (isAuthenticated) {
+      const redirectTimer = setTimeout(() => {
+        navigate("/dashboard/", { replace: true });
+      }, 650);
+      return () => clearTimeout(redirectTimer);
+    }
+  }, [isAuthenticated, navigate]);
 
-      const data = await response.json();
+  const handleLogin = (event) => {
+    event.preventDefault();
+    const email = emailRef.current?.value.trim() || "";
+    const password = passwordRef.current?.value || "";
+    if (!email || !password) {
+      return;
+    }
 
-      if (data.success) {
-        setSuccess("Login successful! Redirecting...");
-        setTimeout(() => (window.location.href = `/dashboard/`), 1000);
-      } else {
-        setError(data.message || "Login failed");
-      }
-    } catch (err) {
-      setError("Connection error. Please try again.");
-    } finally {
-      setLoading(false);
+    dispatch(
+      loginUser({
+        email,
+        password,
+      })
+    );
+  };
+
+  const resetFeedback = () => {
+    if (error || statusMessage) {
+      dispatch(clearAuthFeedback());
     }
   };
 
   return (
     <div className="h-screen w-screen flex overflow-hidden bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50">
-
-      {/* LEFT SIDE */}
       <div className="w-full lg:w-1/2 h-full flex items-center justify-center px-6 py-4 overflow-hidden">
-
         <div className="w-full max-w-md flex flex-col h-full">
-
-          {/* Header — reduced font sizes */}
           <div className="text-center mb-4 mt-4 flex-shrink-0">
             <div className="inline-block p-3 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl shadow-lg mb-3">
               <svg
@@ -83,10 +84,7 @@ const LoginPage = () => {
             </p>
           </div>
 
-          {/* FORM CARD (scrollable only inside) */}
           <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100 overflow-y-auto flex-grow">
-
-            {/* ERROR */}
             {error && (
               <div className="mb-4 p-3 bg-red-50 border-l-4 border-red-500 rounded-lg flex gap-2">
                 <AlertCircle className="w-5 h-5 text-red-600" />
@@ -94,18 +92,14 @@ const LoginPage = () => {
               </div>
             )}
 
-            {/* SUCCESS */}
-            {success && (
+            {statusMessage && (
               <div className="mb-4 p-3 bg-emerald-50 border-l-4 border-emerald-500 rounded-lg flex gap-2">
                 <CheckCircle className="w-5 h-5 text-emerald-600" />
-                <p className="text-emerald-800 text-sm">{success}</p>
+                <p className="text-emerald-800 text-sm">{statusMessage}</p>
               </div>
             )}
 
             <form onSubmit={handleLogin} className="space-y-5">
-
-              {/* EMAIL */}
-              {/* EMAIL */}
               <div>
                 <label className="block text-sm font-semibold mb-1">
                   Email Address
@@ -113,20 +107,17 @@ const LoginPage = () => {
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
 
-
                   <input
                     type="email"
                     required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    ref={emailRef}
+                    onChange={resetFeedback}
                     placeholder="Enter your email"
                     className="w-full pl-10 pr-3 py-2.5 text-base border border-gray-300 rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none text-black"
                   />
                 </div>
               </div>
 
-
-              {/* PASSWORD */}
               <div>
                 <label className="block text-sm font-semibold mb-1">
                   Password
@@ -137,36 +128,28 @@ const LoginPage = () => {
                   <input
                     type={showPassword ? "text" : "password"}
                     required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    ref={passwordRef}
+                    onChange={resetFeedback}
                     placeholder="Enter your password"
                     className="w-full pl-10 pr-10 py-2.5 text-base border border-gray-300 rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none text-black"
                   />
 
                   <button
                     type="button"
-                    onClick={() => setShowPassword(!showPassword)}
+                    onClick={() => setShowPassword((prev) => !prev)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
                   >
-                    {showPassword ? (
-                      <EyeOff className="w-4 h-4" />
-                    ) : (
-                      <Eye className="w-4 h-4" />
-                    )}
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
               </div>
 
-
-              {/* SUBMIT */}
               <button
                 type="submit"
                 disabled={loading}
                 className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white py-3 rounded-lg 
                 text-base font-bold shadow-md hover:shadow-lg transition-all duration-300 ease-out 
                 hover:scale-[1.02] hover:-translate-y-[2px] disabled:opacity-50"
-                onClick={handleLogin}
-
               >
                 {loading ? (
                   <div className="flex gap-2 justify-center items-center">
@@ -179,9 +162,7 @@ const LoginPage = () => {
               </button>
             </form>
 
-            <p className="mt-5 text-center text-gray-500 text-xs">
-              🔒 Secure HR Personnel Access Only
-            </p>
+            <p className="mt-5 text-center text-gray-500 text-xs">🔒 Secure HR Personnel Access Only</p>
           </div>
 
           <p className="mt-4 text-center text-gray-600 text-xs flex-shrink-0">
@@ -190,16 +171,13 @@ const LoginPage = () => {
         </div>
       </div>
 
-      {/* RIGHT SIDE */}
       <div className="hidden lg:flex lg:w-1/2 h-full bg-gradient-to-br from-emerald-600 via-teal-600 to-cyan-600 p-10 relative overflow-y-auto">
-
         <div className="absolute inset-0 opacity-10 pointer-events-none">
-          <div className="absolute top-10 left-10 w-48 h-48 bg-white rounded-full blur-3xl"></div>
-          <div className="absolute bottom-10 right-10 w-64 h-64 bg-white rounded-full blur-3xl"></div>
+          <div className="absolute top-10 left-10 w-48 h-48 bg-white rounded-full blur-3xl" />
+          <div className="absolute bottom-10 right-10 w-64 h-64 bg-white rounded-full blur-3xl" />
         </div>
 
         <div className="relative z-10 text-white max-w-lg my-auto space-y-6">
-
           <h2 className="text-3xl font-black">HR Management System</h2>
 
           <p className="text-lg text-emerald-100">
@@ -223,14 +201,12 @@ const LoginPage = () => {
             text="Data-driven insights for better decision making"
             iconPath="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
           />
-
         </div>
       </div>
     </div>
   );
 };
 
-// FEATURE COMPONENT
 const Feature = ({ title, text, iconPath }) => (
   <div className="flex items-start gap-3">
     <div className="bg-white/20 p-3 rounded-xl backdrop-blur-sm">
@@ -246,3 +222,4 @@ const Feature = ({ title, text, iconPath }) => (
 );
 
 export default LoginPage;
+

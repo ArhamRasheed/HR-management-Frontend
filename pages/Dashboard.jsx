@@ -26,7 +26,7 @@ const Dashboard = () => {
       .catch(error => console.error('Error fetching employee data:', error));
   }, []);
 
-  
+
 
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -266,7 +266,7 @@ const Dashboard = () => {
 
           {/* Manage Departments */}
           <button
-            onClick={() => handleNavigation('manage-departments')}
+            onClick={() => navigate('/department')}
             className={`flex items-center w-full px-6 py-3 hover:bg-green-700 transition-colors ${activePage === 'manage-departments' ? 'bg-green-700 border-l-4 border-green-400' : ''}`}
           >
             <Briefcase className="w-5 h-5 mr-3" />
@@ -284,7 +284,7 @@ const Dashboard = () => {
 
           {/* Manage Designations */}
           <button
-            onClick={() => handleNavigation('manage-designations')}
+            onClick={() => navigate('/designation')}
             className={`flex items-center w-full px-6 py-3 hover:bg-green-700 transition-colors ${activePage === 'manage-designations' ? 'bg-green-700 border-l-4 border-green-400' : ''}`}
           >
             <FileText className="w-5 h-5 mr-3" />
