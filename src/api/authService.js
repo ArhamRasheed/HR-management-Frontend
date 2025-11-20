@@ -1,4 +1,5 @@
 import { request } from "./config";
+import { API_ENDPOINTS } from "../constants/apiEndpoints";
 
 /**
  * Service responsible for authentication-related API calls.
@@ -12,9 +13,10 @@ export const authService = {
    * @returns {Promise<object>} API response.
    */
   login(email, password) {
-    return request("/api/login/", {
+    return request(API_ENDPOINTS.auth.login(), {
       method: "POST",
       body: { email, password },
+      credentials: "include",
     });
   },
 
@@ -24,8 +26,9 @@ export const authService = {
    * @returns {Promise<object>} API response.
    */
   logout() {
-    return request("/api/logout/", {
+    return request(API_ENDPOINTS.auth.logout(), {
       method: "POST",
+      credentials: "include",
     });
   },
 
@@ -35,9 +38,9 @@ export const authService = {
    * @returns {Promise<object>} API response.
    */
   checkSession() {
-    return request("/api/check-session/", {
+    return request(API_ENDPOINTS.auth.session(), {
       method: "GET",
+      credentials: "include",
     });
   },
 };
-

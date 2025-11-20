@@ -1,4 +1,5 @@
 import { request } from "./config";
+import { API_ENDPOINTS } from "../constants/apiEndpoints";
 
 /**
  * Department domain API service.
@@ -10,7 +11,7 @@ export const departmentService = {
    * @returns {Promise<object>} API response containing departments.
    */
   fetchDepartments() {
-    return request("/api/departments/", {
+    return request(API_ENDPOINTS.departments.list(), {
       method: "GET",
     });
   },
@@ -22,7 +23,7 @@ export const departmentService = {
    * @returns {Promise<object>} API response.
    */
   addDepartment(payload) {
-    return request("/api/departments/add/", {
+    return request(API_ENDPOINTS.departments.create(), {
       method: "POST",
       body: payload,
     });
@@ -36,7 +37,7 @@ export const departmentService = {
    * @returns {Promise<object>} API response.
    */
   updateDepartment(id, payload) {
-    return request(`/api/departments/update/${id}/`, {
+    return request(API_ENDPOINTS.departments.update(id), {
       method: "PUT",
       body: payload,
     });
@@ -49,7 +50,7 @@ export const departmentService = {
    * @returns {Promise<object>} API response.
    */
   deleteDepartment(id) {
-    return request(`/api/departments/delete/${id}/`, {
+    return request(API_ENDPOINTS.departments.delete(id), {
       method: "DELETE",
     });
   },

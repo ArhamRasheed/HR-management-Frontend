@@ -1,4 +1,5 @@
 import { request } from "./config";
+import { API_ENDPOINTS } from "../constants/apiEndpoints";
 
 /**
  * Designation domain API service mirroring the department service contract.
@@ -10,7 +11,7 @@ export const designationService = {
    * @returns {Promise<object>} API response containing designations.
    */
   fetchDesignations() {
-    return request("/api/designations/", {
+    return request(API_ENDPOINTS.designations.list(), {
       method: "GET",
     });
   },
@@ -22,7 +23,7 @@ export const designationService = {
    * @returns {Promise<object>} API response.
    */
   addDesignation(payload) {
-    return request("/api/designations/add/", {
+    return request(API_ENDPOINTS.designations.create(), {
       method: "POST",
       body: payload,
     });
@@ -36,7 +37,7 @@ export const designationService = {
    * @returns {Promise<object>} API response.
    */
   updateDesignation(id, payload) {
-    return request(`/api/designations/update/${id}/`, {
+    return request(API_ENDPOINTS.designations.update(id), {
       method: "PUT",
       body: payload,
     });
@@ -49,7 +50,7 @@ export const designationService = {
    * @returns {Promise<object>} API response.
    */
   deleteDesignation(id) {
-    return request(`/api/designations/delete/${id}/`, {
+    return request(API_ENDPOINTS.designations.delete(id), {
       method: "DELETE",
     });
   },

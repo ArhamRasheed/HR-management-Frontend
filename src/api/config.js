@@ -4,13 +4,7 @@
  * @module api/config
  */
 
-/**
- * Base URL for all API calls.
- * Falls back to localhost when the environment variable is missing.
- *
- * @type {string}
- */
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+import { API_BASE_URL } from "../constants/apiEndpoints";
 
 /**
  * Perform a fetch request with sensible defaults for the project.

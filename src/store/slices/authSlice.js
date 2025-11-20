@@ -27,6 +27,7 @@ export const loginUser = createAsyncThunk(
       if (!response.success) {
         throw new Error(response.message || "Invalid credentials");
       }
+      
       return response;
     } catch (error) {
       return thunkAPI.rejectWithValue(normalizeError(error));
@@ -93,15 +94,21 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
+        // Store complete user object from API response (includes: id, email, full_name, department)
+        // Note: The backend returns user.department, not user.role
         state.user = action.payload.user || null;
         state.isAuthenticated = Boolean(
-          action.payload.success ?? action.payload.authenticated ?? action.payload.user
+          action.payload.success ??
+            action.payload.authenticated ??
+            action.payload.user
         );
+        state.initialized = true;
         state.error = null;
         state.statusMessage = action.payload.message || "Login successful.";
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
+        state.initialized = true;
         state.error = action.payload || "Unable to login right now.";
         state.statusMessage = null;
       })
@@ -114,7 +121,8 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = null;
         state.isAuthenticated = false;
-        state.statusMessage = action.payload?.message || "Logged out successfully.";
+        state.statusMessage =
+          action.payload?.message || "Logged out successfully.";
       })
       .addCase(logoutUser.rejected, (state, action) => {
         state.loading = false;
@@ -127,6 +135,8 @@ const authSlice = createSlice({
       .addCase(checkSession.fulfilled, (state, action) => {
         state.loading = false;
         state.initialized = true;
+        // Store complete user object from session check (includes: id, email, full_name, department)
+        // Note: The backend returns user.department, not user.role
         state.user = action.payload.user || null;
         state.isAuthenticated = Boolean(action.payload.authenticated);
         state.statusMessage = null;
@@ -148,4 +158,3 @@ const authSlice = createSlice({
 export const { clearAuthFeedback } = authSlice.actions;
 
 export default authSlice.reducer;
-

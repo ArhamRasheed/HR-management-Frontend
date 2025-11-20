@@ -11,6 +11,7 @@ import {
   EyeOff,
 } from "lucide-react";
 import { clearAuthFeedback, loginUser } from "../src/store/slices/authSlice";
+import { getDefaultRoute } from "../src/utils/navigationHelpers";
 
 const LoginPage = () => {
   const dispatch = useDispatch();
@@ -19,18 +20,19 @@ const LoginPage = () => {
   const passwordRef = useRef(null);
   const [showPassword, setShowPassword] = useState(false);
 
-  const { loading, error, isAuthenticated, statusMessage } = useSelector(
+  const { loading, error, isAuthenticated, statusMessage, user } = useSelector(
     (state) => state.auth
   );
 
   useEffect(() => {
     if (isAuthenticated) {
+      const target = getDefaultRoute(user?.department);
       const redirectTimer = setTimeout(() => {
-        navigate("/dashboard/", { replace: true });
+        navigate(target, { replace: true });
       }, 650);
       return () => clearTimeout(redirectTimer);
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, user?.department]);
 
   const handleLogin = (event) => {
     event.preventDefault();
