@@ -6,18 +6,25 @@ import AppRoutes from "./routes/AppRoutes";
 
 function App() {
   const dispatch = useDispatch();
-  const { initialized } = useSelector((state) => state.auth);
+  const { initialized, isAuthenticated, user } = useSelector((state) => state.auth);
+
+  console.log('🎬 APP.jsx - Component rendering');
+  console.log('🎬 APP.jsx - Auth state:', { initialized, isAuthenticated, hasUser: !!user });
 
   useEffect(() => {
+    console.log('🎬 APP.jsx - useEffect triggered, initialized:', initialized);
     if (!initialized) {
+      console.log('🎬 APP.jsx - Dispatching checkSession...');
       dispatch(checkSession());
     }
   }, [dispatch, initialized]);
 
   if (!initialized) {
+    console.log('🎬 APP.jsx - Rendering AppLoader (not initialized)');
     return <AppLoader message="verifying" />;
   }
 
+  console.log('🎬 APP.jsx - Rendering AppRoutes');
   return <AppRoutes />;
 }
 

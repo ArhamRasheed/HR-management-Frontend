@@ -27,7 +27,7 @@ export const loginUser = createAsyncThunk(
       if (!response.success) {
         throw new Error(response.message || "Invalid credentials");
       }
-      
+
       return response;
     } catch (error) {
       return thunkAPI.rejectWithValue(normalizeError(error));
@@ -93,18 +93,25 @@ const authSlice = createSlice({
         state.statusMessage = null;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
+        console.log('✅ AUTHSLICE - Login fulfilled - payload:', action.payload);
+        console.log('✅ AUTHSLICE - User data:', action.payload.user);
+        
         state.loading = false;
         // Store complete user object from API response (includes: id, email, full_name, department)
         // Note: The backend returns user.department, not user.role
         state.user = action.payload.user || null;
         state.isAuthenticated = Boolean(
-          action.payload.success ??
-            action.payload.authenticated ??
-            action.payload.user
+          action.payload.success ?? action.payload.authenticated ?? action.payload.user
         );
         state.initialized = true;
         state.error = null;
         state.statusMessage = action.payload.message || "Login successful.";
+        
+        console.log('✅ AUTHSLICE - New state:', {
+          user: state.user,
+          isAuthenticated: state.isAuthenticated,
+          initialized: state.initialized
+        });
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;

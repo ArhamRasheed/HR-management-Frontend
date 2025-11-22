@@ -63,10 +63,10 @@ export const API_ENDPOINTS = {
     create: () => "/api/departments/add/",
     /**
      * Update an existing department.
-     * @param {number|string} id - Department identifier.
+     * @param {string} departmentName - Department name (used in URL path).
      * @returns {string} Department update endpoint.
      */
-    update: (id) => `/api/departments/update/${id}/`,
+    update: (departmentName) => `/api/departments/${encodeURIComponent(departmentName)}/update/`,
     /**
      * Delete a department record.
      * @param {number|string} id - Department identifier.
@@ -134,6 +134,13 @@ export const API_ENDPOINTS = {
      * @returns {string} Payroll detail endpoint.
      */
     detail: (id) => `/api/payroll/${id}/`,
+  },
+  dashboard: {
+    /**
+     * Fetch dashboard overview data for HR.
+     * @returns {string} Dashboard overview endpoint.
+     */
+    overview: () => "/api/dashboard/",
   },
   reports: {
     /**
