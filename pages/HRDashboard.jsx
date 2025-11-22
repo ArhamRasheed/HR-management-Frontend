@@ -478,8 +478,8 @@ const HRDashboard = () => {
 
           {/* Manage Employees */}
           <button
-            onClick={() => handleNavigation('manage-employees')}
-            className={`flex items-center w-full px-6 py-3 hover:bg-green-700 transition-colors ${activePage === 'manage-employees' ? 'bg-green-700 border-l-4 border-green-400' : ''}`}
+            onClick={() => navigate(ROUTE_PATHS.PROTECTED.EMPLOYEES)}
+            className="flex items-center w-full px-6 py-3 hover:bg-green-700 transition-colors"
           >
             <Users className="w-5 h-5 mr-3" />
             <span>Manage Employees</span>

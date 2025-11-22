@@ -2,7 +2,8 @@
  * Centralized registry of backend API endpoints.
  * Keep this in sync with Django's `urls.py` definitions.
  */
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+export const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 
 /**
  * Structured collection of API endpoints grouped by domain.
@@ -31,13 +32,12 @@ export const API_ENDPOINTS = {
      * Fetch the employee collection with optional filters.
      * @returns {string} Employee list endpoint.
      */
-    list: () => "/api/employees/",
+    list: () => "/api/employees/all/",
     /**
      * Retrieve a single employee record.
-     * @param {number|string} id - Employee identifier.
      * @returns {string} Employee detail endpoint.
      */
-    detail: (id) => `/api/employees/${id}/`,
+    detail: () => "/api/employees/",
     /**
      * Invite a new employee to the organisation.
      * @returns {string} Employee invitation endpoint.
@@ -49,6 +49,23 @@ export const API_ENDPOINTS = {
      * @returns {string} Employee onboarding endpoint.
      */
     onboarding: (id) => `/api/employees/${id}/onboarding/`,
+    /**
+     * Update an employee record.
+     * @param {number|string} id - Employee identifier.
+     * @returns {string} Employee update endpoint.
+     */
+    update: (id) => `/api/employees/${id}/update/`,
+    /**
+     * Delete an employee record.
+     * @param {number|string} id - Employee identifier.
+     * @returns {string} Employee deletion endpoint.
+     */
+    delete: (id) => `/api/employees/${id}/delete/`,
+    /**
+     * Hire a candidate as an employee.
+     * @returns {string} Employee hire endpoint.
+     */
+    hire: () => "/api/employees/hire/",
   },
   departments: {
     /**
@@ -66,7 +83,8 @@ export const API_ENDPOINTS = {
      * @param {string} departmentName - Department name (used in URL path).
      * @returns {string} Department update endpoint.
      */
-    update: (departmentName) => `/api/departments/${encodeURIComponent(departmentName)}/update/`,
+    update: (departmentName) =>
+      `/api/departments/${encodeURIComponent(departmentName)}/update/`,
     /**
      * Delete a department record.
      * @param {number|string} id - Department identifier.
@@ -104,6 +122,11 @@ export const API_ENDPOINTS = {
      * @returns {string} Candidates list endpoint.
      */
     candidates: () => "/api/recruitment/candidates/",
+    /**
+     * Fetch shortlisted candidates.
+     * @returns {string} Shortlisted candidates endpoint.
+     */
+    shortlisted: () => "/api/shortlisted-candidates/",
     /**
      * Fetch a single candidate profile.
      * @param {number|string} id - Candidate identifier.
@@ -162,5 +185,3 @@ export const API_ENDPOINTS = {
 };
 
 export default API_ENDPOINTS;
-
-

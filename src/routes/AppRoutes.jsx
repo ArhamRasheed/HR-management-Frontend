@@ -9,14 +9,12 @@ import Contact from "../../pages/Contact";
 import About from "../../pages/About";
 import DepartmentsPage from "../../pages/DepartmentsPage";
 import DesignationsPage from "../../pages/DesignationsPage";
+import EmployeesPage from "../../pages/EmployeesPage";
 
 const { PUBLIC, PROTECTED } = ROUTE_PATHS;
 
 const AuthenticationRoutes = () => {
   const { isAuthenticated } = useSelector((state) => state.auth);
-  
-  console.log('🔓 AUTHROUTES - Component rendering');
-  console.log('🔓 AUTHROUTES - isAuthenticated:', isAuthenticated);
 
   return (
     <Routes>
@@ -58,11 +56,6 @@ const AuthenticationRoutes = () => {
 
 const ProtectedRoutes = () => {
   const { user } = useSelector((state) => state.auth);
-
-  console.log('🔐 PROTECTEDROUTES - Component rendering');
-  console.log('🔐 PROTECTEDROUTES - user:', user);
-  console.log('🔐 PROTECTEDROUTES - user.department:', user?.department);
-  console.log('🔐 PROTECTEDROUTES - PROTECTED.HR_DASHBOARD:', PROTECTED.HR_DASHBOARD);
 
   return (
     <Routes>
@@ -160,7 +153,7 @@ const ProtectedRoutes = () => {
                 allowedDepartments={[DEPARTMENTS.HR, DEPARTMENTS.FINANCE]}
                 routePath={PROTECTED.EMPLOYEES}
               >
-                <ComingSoonPage title="Employees Directory" />
+                <EmployeesPage />
               </ProtectedRoute>
             }
           />
@@ -214,10 +207,6 @@ const ProtectedRoutes = () => {
 export default function AppRoutes() {
   const { isAuthenticated, user } = useSelector((state) => state.auth);
 
-  console.log('🚀 APPROUTES - Component rendering');
-  console.log('🚀 APPROUTES - isAuthenticated:', isAuthenticated);
-  console.log('🚀 APPROUTES - user:', user);
-  console.log('🚀 APPROUTES - Will render:', isAuthenticated ? 'ProtectedRoutes' : 'AuthenticationRoutes');
 
   return <BrowserRouter>{isAuthenticated ? <ProtectedRoutes /> : <AuthenticationRoutes />}</BrowserRouter>;
 }
