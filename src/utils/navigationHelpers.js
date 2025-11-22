@@ -2,13 +2,37 @@ import { ROUTE_PATHS } from "../constants/routePaths";
 import { DEPARTMENTS, canAccessRoute } from "../constants/permissions";
 
 const NAV_ITEMS = [
-  { key: "DASHBOARD", label: "Dashboard", path: ROUTE_PATHS.PROTECTED.DASHBOARD },
-  { key: "EMPLOYEES", label: "Employees", path: ROUTE_PATHS.PROTECTED.EMPLOYEES },
-  { key: "CANDIDATES", label: "Candidates", path: ROUTE_PATHS.PROTECTED.CANDIDATES },
-  { key: "DEPARTMENTS", label: "Departments", path: ROUTE_PATHS.PROTECTED.DEPARTMENTS },
-  { key: "DESIGNATIONS", label: "Designations", path: ROUTE_PATHS.PROTECTED.DESIGNATIONS },
+  {
+    key: "DASHBOARD",
+    label: "Dashboard",
+    path: ROUTE_PATHS.PROTECTED.HR_DASHBOARD,
+  },
+  {
+    key: "EMPLOYEES",
+    label: "Employees",
+    path: ROUTE_PATHS.PROTECTED.EMPLOYEES,
+  },
+  {
+    key: "CANDIDATES",
+    label: "Candidates",
+    path: ROUTE_PATHS.PROTECTED.CANDIDATES,
+  },
+  {
+    key: "DEPARTMENTS",
+    label: "Departments",
+    path: ROUTE_PATHS.PROTECTED.DEPARTMENTS,
+  },
+  {
+    key: "DESIGNATIONS",
+    label: "Designations",
+    path: ROUTE_PATHS.PROTECTED.DESIGNATIONS,
+  },
   { key: "REPORTS", label: "Reports", path: ROUTE_PATHS.PROTECTED.REPORTS },
-  { key: "PAYROLL", label: "Payroll", path: ROUTE_PATHS.PROTECTED.PAYROLL_HISTORY },
+  {
+    key: "PAYROLL",
+    label: "Payroll",
+    path: ROUTE_PATHS.PROTECTED.PAYROLL_HISTORY,
+  },
   { key: "PROFILE", label: "My Profile", path: ROUTE_PATHS.PROTECTED.PROFILE },
 ];
 
@@ -45,15 +69,13 @@ export function canAccess(routePath, userDepartment) {
 export function getDefaultRoute(userDepartment) {
   switch (userDepartment) {
     case DEPARTMENTS.HR:
-      return ROUTE_PATHS.PROTECTED.DASHBOARD;
+      return ROUTE_PATHS.PROTECTED.HR_DASHBOARD;
     case DEPARTMENTS.FINANCE:
       return ROUTE_PATHS.PROTECTED.EMPLOYEES;
     case DEPARTMENTS.IT:
     case DEPARTMENTS.OPERATIONS:
       return ROUTE_PATHS.PROTECTED.PAYROLL_HISTORY;
     default:
-      return ROUTE_PATHS.PROTECTED.DASHBOARD;
+      return ROUTE_PATHS.PROTECTED.HR_DASHBOARD;
   }
 }
-
-

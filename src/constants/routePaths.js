@@ -8,7 +8,7 @@ export const ROUTE_PATHS = Object.freeze({
     SUPPORT: "/support",
   },
   PROTECTED: {
-    DASHBOARD: "/dashboard",
+    HR_DASHBOARD: "/hr-dashboard",
     DEPARTMENTS: "/departments",
     DESIGNATIONS: "/designations",
     EMPLOYEES: "/employees",

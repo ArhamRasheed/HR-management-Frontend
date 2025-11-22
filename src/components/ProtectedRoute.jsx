@@ -21,19 +21,47 @@ export default function ProtectedRoute({ children, allowedDepartments, routePath
 
   const { isAuthenticated, user, loading, initialized } = useSelector((state) => state.auth);
 
+  console.log('🛡️ PROTECTEDROUTE - Component rendering');
+  console.log('🛡️ PROTECTEDROUTE - routePath:', routePath);
+  console.log('🛡️ PROTECTEDROUTE - location:', location.pathname);
+  console.log('🛡️ PROTECTEDROUTE - Auth state:', { isAuthenticated, initialized, loading, user });
+
   const targetPath = routePath || location.pathname;
   const userDepartment = user?.department;
   const departmentReady = Boolean(userDepartment);
 
+  console.log('🛡️ PROTECTEDROUTE - userDepartment:', userDepartment);
+  console.log('🛡️ PROTECTEDROUTE - departmentReady:', departmentReady);
+
   const isAllowed = useMemo(() => {
-    if (!userDepartment) return false;
-    if (Array.isArray(allowedDepartments) && allowedDepartments.length > 0) {
-      return allowedDepartments.includes(userDepartment);
+    console.log('🛡️ PROTECTEDROUTE - Calculating isAllowed...');
+    if (!userDepartment) {
+      console.log('🛡️ PROTECTEDROUTE - No department, returning false');
+      return false;
     }
-    return canAccessRoute(targetPath, userDepartment);
+    if (Array.isArray(allowedDepartments) && allowedDepartments.length > 0) {
+      const allowed = allowedDepartments.includes(userDepartment);
+      console.log('🛡️ PROTECTEDROUTE - Checking allowedDepartments:', allowedDepartments, 'result:', allowed);
+      return allowed;
+    }
+    const canAccess = canAccessRoute(targetPath, userDepartment);
+    console.log('🛡️ PROTECTEDROUTE - canAccessRoute result:', canAccess);
+    return canAccess;
   }, [allowedDepartments, targetPath, userDepartment]);
 
+  console.log('🛡️ PROTECTEDROUTE - Final isAllowed:', isAllowed);
+
   useEffect(() => {
+    console.log('🛡️ ProtectedRoute Debug:', {
+      isAuthenticated,
+      initialized,
+      loading,
+      user,
+      userDepartment,
+      departmentReady,
+      isAllowed,
+      targetPath
+    });
     if (isAuthenticated && initialized && !loading && departmentReady && !isAllowed) {
       setToastMessage("You don't have permission to access this page");
     } else {
@@ -42,10 +70,12 @@ export default function ProtectedRoute({ children, allowedDepartments, routePath
   }, [isAllowed, isAuthenticated, initialized, loading, departmentReady]);
 
   if (!initialized || loading || !departmentReady) {
+    console.log('🛡️ PROTECTEDROUTE - Rendering AppLoader', { initialized, loading, departmentReady });
     return <AppLoader message="verifying" />;
   }
 
   if (!isAuthenticated) {
+    console.log('🛡️ PROTECTEDROUTE - Not authenticated, redirecting to login');
     return (
       <Navigate
         to={ROUTE_PATHS.PUBLIC.LOGIN}
@@ -56,14 +86,16 @@ export default function ProtectedRoute({ children, allowedDepartments, routePath
   }
 
   if (!isAllowed) {
+    console.log('🛡️ PROTECTEDROUTE - Not allowed, redirecting to dashboard');
     return (
       <>
         <Toast message={toastMessage} onClose={() => setToastMessage("")} />
-        <Navigate to={ROUTE_PATHS.PROTECTED.DASHBOARD} replace />
+        <Navigate to={ROUTE_PATHS.PROTECTED.HR_DASHBOARD} replace />
       </>
     );
   }
 
+  console.log('🛡️ PROTECTEDROUTE - All checks passed, rendering children');
   return children;
 }
 

@@ -30,16 +30,19 @@ export const departmentService = {
   },
 
   /**
-   * Update an existing department.
+   * Update a department name.
    *
-   * @param {number|string} id - Department identifier.
-   * @param {{ name: string }} payload - Updated data.
+   * @param {string} currentName - Current department name (used in URL).
+   * @param {string} newName - New department name.
    * @returns {Promise<object>} API response.
    */
-  updateDepartment(id, payload) {
-    return request(API_ENDPOINTS.departments.update(id), {
+  updateDepartment(currentName, newName) {
+    return request(API_ENDPOINTS.departments.update(currentName), {
       method: "PUT",
-      body: payload,
+      body: {
+        to_update: "department_name",
+        new_val: newName,
+      },
     });
   },
 

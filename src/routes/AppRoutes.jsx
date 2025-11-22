@@ -4,7 +4,7 @@ import ProtectedRoute from "../components/ProtectedRoute";
 import { ROUTE_PATHS } from "../constants/routePaths";
 import { DEPARTMENTS } from "../constants/permissions";
 import LoginPage from "../../pages/LoginPage";
-import Dashboard from "../../pages/Dashboard";
+import HRDashboard from "../../pages/HRDashboard";
 import Contact from "../../pages/Contact";
 import About from "../../pages/About";
 import DepartmentsPage from "../../pages/DepartmentsPage";
@@ -14,6 +14,9 @@ const { PUBLIC, PROTECTED } = ROUTE_PATHS;
 
 const AuthenticationRoutes = () => {
   const { isAuthenticated } = useSelector((state) => state.auth);
+  
+  console.log('🔓 AUTHROUTES - Component rendering');
+  console.log('🔓 AUTHROUTES - isAuthenticated:', isAuthenticated);
 
   return (
     <Routes>
@@ -21,7 +24,7 @@ const AuthenticationRoutes = () => {
         path={PUBLIC.ROOT}
         element={
           <Navigate
-            to={isAuthenticated ? PROTECTED.DASHBOARD : PUBLIC.LOGIN}
+            to={isAuthenticated ? PROTECTED.HR_DASHBOARD : PUBLIC.LOGIN}
             replace
           />
         }
@@ -32,7 +35,7 @@ const AuthenticationRoutes = () => {
           !isAuthenticated ? (
             <LoginPage />
           ) : (
-            <Navigate to={PROTECTED.DASHBOARD} replace />
+            <Navigate to={PROTECTED.HR_DASHBOARD} replace />
           )
         }
       />
@@ -44,7 +47,7 @@ const AuthenticationRoutes = () => {
         path="*"
         element={
           <Navigate
-            to={isAuthenticated ? PROTECTED.DASHBOARD : PUBLIC.LOGIN}
+            to={isAuthenticated ? PROTECTED.HR_DASHBOARD : PUBLIC.LOGIN}
             replace
           />
         }
@@ -56,19 +59,29 @@ const AuthenticationRoutes = () => {
 const ProtectedRoutes = () => {
   const { user } = useSelector((state) => state.auth);
 
+  console.log('🔐 PROTECTEDROUTES - Component rendering');
+  console.log('🔐 PROTECTEDROUTES - user:', user);
+  console.log('🔐 PROTECTEDROUTES - user.department:', user?.department);
+  console.log('🔐 PROTECTEDROUTES - PROTECTED.HR_DASHBOARD:', PROTECTED.HR_DASHBOARD);
+
   return (
     <Routes>
+      {/* Redirect legacy /dashboard path to /hr-dashboard */}
       <Route
-        path={PROTECTED.DASHBOARD}
+        path="/dashboard"
+        element={<Navigate to={PROTECTED.HR_DASHBOARD} replace />}
+      />
+      <Route
+        path={PROTECTED.HR_DASHBOARD}
         element={
-          <ProtectedRoute routePath={PROTECTED.DASHBOARD}>
-            <Dashboard />
+          <ProtectedRoute routePath={PROTECTED.HR_DASHBOARD}>
+            <HRDashboard />
           </ProtectedRoute>
         }
       />
       <Route
         path={PUBLIC.ROOT}
-        element={<Navigate to={PROTECTED.DASHBOARD} replace />}
+        element={<Navigate to={PROTECTED.HR_DASHBOARD} replace />}
       />
 
       <Route
@@ -193,13 +206,18 @@ const ProtectedRoutes = () => {
         }
       />
 
-      <Route path="*" element={<Navigate to={PROTECTED.DASHBOARD} replace />} />
+      <Route path="*" element={<Navigate to={PROTECTED.HR_DASHBOARD} replace />} />
     </Routes>
   );
 };
 
 export default function AppRoutes() {
-  const { isAuthenticated } = useSelector((state) => state.auth);
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
+
+  console.log('🚀 APPROUTES - Component rendering');
+  console.log('🚀 APPROUTES - isAuthenticated:', isAuthenticated);
+  console.log('🚀 APPROUTES - user:', user);
+  console.log('🚀 APPROUTES - Will render:', isAuthenticated ? 'ProtectedRoutes' : 'AuthenticationRoutes');
 
   return <BrowserRouter>{isAuthenticated ? <ProtectedRoutes /> : <AuthenticationRoutes />}</BrowserRouter>;
 }

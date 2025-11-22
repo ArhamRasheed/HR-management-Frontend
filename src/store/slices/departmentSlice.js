@@ -51,14 +51,15 @@ export const addDepartment = createAsyncThunk(
 export const updateDepartment = createAsyncThunk(
   "departments/update",
   /**
-   * Update department thunk.
+   * Update an existing department.
+   * Note: Backend uses department_name in URL, not ID
    *
-   * @param {{ id: number|string, name: string }} payload
+   * @param {{ currentName: string, newName: string }} payload
    * @param {import("@reduxjs/toolkit").ThunkAPI} thunkAPI
    */
-  async ({ id, name }, thunkAPI) => {
+  async ({ currentName, newName }, thunkAPI) => {
     try {
-      const response = await departmentService.updateDepartment(id, { name });
+      const response = await departmentService.updateDepartment(currentName, newName);
       await thunkAPI.dispatch(fetchDepartments());
       return response;
     } catch (error) {
