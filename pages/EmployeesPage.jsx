@@ -89,7 +89,7 @@ const EmployeesPage = () => {
   const getStatusBadge = (status) => {
     const statusConfig = {
       active: { bg: "bg-green-100", text: "text-green-800", label: "Active" },
-      on_leave: { bg: "bg-yellow-100", text: "text-yellow-800", label: "On Leave" },
+      fired: { bg: "bg-yellow-100", text: "text-yellow-800", label: "Fired" },
       terminated: { bg: "bg-red-100", text: "text-red-800", label: "Terminated" },
     };
     const config = statusConfig[status] || statusConfig.active;

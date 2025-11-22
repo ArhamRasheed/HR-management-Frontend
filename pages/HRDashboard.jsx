@@ -62,7 +62,9 @@ const HRDashboard = () => {
       }
     });
   };
-
+  const show_employees = () => {
+    navigate('/employees')
+  }
   const toggleSubmenu = (menuKey) => {
     setExpandedMenus(prev => ({
       ...prev,
@@ -143,7 +145,7 @@ const HRDashboard = () => {
       <div className="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
         <div className="flex items-start justify-between mb-4">
           <div className="flex-1">
-            <p className="text-sm font-medium text-gray-600 mb-1">Today's Attendance</p>
+            <p className="text-sm font-medium text-gray-600 mb-1">Total Attendance</p>
             <p className="text-3xl font-bold text-gray-900 mb-2">{percentage}%</p>
             <p className="text-sm text-gray-500">{presentCount} Present • {absentCount} Absent</p>
           </div>
@@ -230,11 +232,6 @@ const HRDashboard = () => {
                   ? `${newHiresCount} new hire${newHiresCount !== 1 ? 's' : ''} this month`
                   : "No new hires this month"}
               </p>
-              {newHiresCount > 0 && (
-                <p className="text-xs text-gray-400 mt-2">
-                  (Detailed view not available)
-                </p>
-              )}
             </div>
           ) : (
             <div className="space-y-3 max-h-80 overflow-y-auto">
@@ -257,7 +254,7 @@ const HRDashboard = () => {
           <button
             className="mt-4 w-full text-center text-sm text-green-600 hover:text-green-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={newHiresCount === 0}
-          >
+           onClick={show_employees}>
             View All Employees →
           </button>
         </div>
@@ -280,11 +277,7 @@ const HRDashboard = () => {
                   ? `${pendingLeavesCount} pending leave application${pendingLeavesCount !== 1 ? 's' : ''}`
                   : "No pending leave requests"}
               </p>
-              {pendingLeavesCount > 0 && (
-                <p className="text-xs text-gray-400 mt-2">
-                  (Detailed view not available)
-                </p>
-              )}
+              
             </div>
           ) : (
             <div className="space-y-3 max-h-80 overflow-y-auto">
@@ -642,11 +635,6 @@ const HRDashboard = () => {
                           <p className="text-xs text-gray-500 mt-1">{notification.time}</p>
                         </div>
                       ))}
-                    </div>
-                    <div className="p-3 text-center border-t border-gray-200">
-                      <button className="text-sm text-green-600 hover:text-green-700 font-medium">
-                        View All Notifications
-                      </button>
                     </div>
                   </div>
                 )}
