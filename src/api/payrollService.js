@@ -17,5 +17,22 @@ export const payrollService = {
     });
     return response;
   },
+  /**
+   * Generate payroll for a specific month and year.
+   *
+   * @param {number} month - Month number (1-12).
+   * @param {number} year - Year (YYYY).
+   * @returns {Promise<object>} API response containing generated payrolls.
+   */
+  generatePayroll: async (month, year) => {
+    const response = await request(
+      `${API_ENDPOINTS.payroll.generate()}?month=${month}&year=${year}`,
+      {
+        method: "GET",
+        credentials: "include",
+      }
+    );
+    return response;
+  },
 };
 
