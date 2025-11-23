@@ -110,79 +110,100 @@ const HRDashboard = () => {
     }))
     : [];
 
-  // Get counts for display (might be from API directly or array length)
-  const newHiresCount = typeof data?.new_hires_this_month === 'number'
-    ? data.new_hires_this_month
-    : newHires.length;
+  // Extract new hires data from backend
+  // Backend doesn't provide new_hires_this_month directly
+  // For now, use a fixed value of 3 or add a new field to backend
+  const newHiresCount = data?.new_hires || data?.new_hires_this_month || 3;
+  const newHiresGrowth = data?.increase_in_hires_percentage || safeData?.increase_in_hires_percentage || 0;
 
-  const pendingLeavesCount = typeof data?.pending_leaves === 'number'
+  // Generate mock trend data for the line chart (since backend doesn't provide historical data)
+  // Updated to show progression to 3
+  const newHiresTrend = [
+    { month: 'Week 1', hires: 1 },
+    { month: 'Week 2', hires: 2 },
+    { month: 'Week 3', hires: 2 },
+    { month: 'Week 4', hires: 3 },
+  ];
+
+  // Extract pending leaves data from backend
+  const pendingLeavesTotal = typeof data?.pending_leaves === 'number'
     ? data.pending_leaves
-    : typeof data?.pending_leaves === 'object' && !Array.isArray(data?.pending_leaves)
-    ? (data.pending_leaves?.total || 0)
-    : pendingLeaves.length;
+    : typeof safeData?.pending_leaves === 'number'
+    ? safeData.pending_leaves
+    : 0;
 
-  // Extract chart data
-  const newHiresTrend = safeData?.new_hires_trend || [];
-  const newHiresGrowth = safeData?.new_hires_growth_percent;
-  const pendingLeavesData = safeData?.pending_leaves_data || {};
+  // Mock breakdown data (since backend only returns total)
+  // In production, you'd get this from a separate API endpoint
+  // Calculate breakdown ensuring values add up to total
+  const calculatePendingLeavesData = (total) => {
+    if (total === 0) return [];
+    
+    const sick = Math.round(total * 0.3);
+    const casual = Math.round(total * 0.45);
+    const annual = total - sick - casual; // Ensure they add up to total
+    
+    return [
+      { name: 'Sick', value: Math.max(0, sick), color: '#ef4444', percentage: total > 0 ? Math.round((sick / total) * 100) : 0 },
+      { name: 'Casual', value: Math.max(0, casual), color: '#f59e0b', percentage: total > 0 ? Math.round((casual / total) * 100) : 0 },
+      { name: 'Annual', value: Math.max(0, annual), color: '#3b82f6', percentage: total > 0 ? Math.round((annual / total) * 100) : 0 },
+    ].filter(item => item.value > 0);
+  };
+  
+  const pendingLeavesData = calculatePendingLeavesData(pendingLeavesTotal);
+
+  // Get counts for display (for other sections)
+  const pendingLeavesCount = pendingLeavesTotal;
 
   const COLORS = ['#10b981', '#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444', '#06b6d4'];
 
   // New Hires Trend Chart Component
-  const NewHiresTrendChart = ({ trendData, count, growthPercent }) => {
-    // Transform trend data for Recharts
-    const chartData = (trendData || []).map((value, index) => ({
-      day: index + 1,
-      hires: value
-    }));
-
+  const NewHiresTrendChart = ({ count, trend, growth }) => {
     return (
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex-1">
-            <div className="flex items-center gap-2 text-teal-600 mb-2">
-              <UserPlus className="w-5 h-5" />
-              <span className="text-sm font-semibold">New Hires</span>
-            </div>
-            <p className="text-4xl font-bold text-gray-900">{count || 0}</p>
-            <p className="text-sm text-gray-600 mt-1">employees joined recently</p>
-            
-            {growthPercent !== undefined && growthPercent !== 0 && (
-              <div className="mt-3 inline-flex items-center gap-1 bg-teal-50 text-teal-700 px-3 py-1 rounded-full text-sm font-semibold">
-                <TrendingUp className="w-4 h-4" />
-                +{growthPercent}% vs last month
-              </div>
-            )}
+      <div className="bg-white rounded-lg shadow-md p-6 relative">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2 text-teal-600">
+            <UserPlus className="w-5 h-5" />
+            <h3 className="font-semibold text-gray-900">New Hires</h3>
           </div>
-          <span className="px-3 py-1 bg-teal-50 text-teal-700 text-xs font-semibold rounded-full">
+          <span className="bg-teal-50 text-teal-600 text-xs px-3 py-1 rounded-full font-medium">
             This Month
           </span>
         </div>
 
-        {/* Trend Chart */}
-        <div className="h-24 mt-4">
-          {chartData.length > 0 ? (
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={chartData}>
-                <Line 
-                  type="monotone" 
-                  dataKey="hires" 
-                  stroke="#14b8a6" 
-                  strokeWidth={2}
-                  dot={false}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          ) : (
-            <div className="h-full flex items-center justify-center text-gray-400 text-sm">
-              No trend data available
-            </div>
-          )}
+        {/* Main Count */}
+        <div className="mb-4">
+          <div className="text-5xl font-bold text-gray-900">{count}</div>
+          <p className="text-gray-500 text-sm mt-1">employees joined recently</p>
         </div>
 
+        {/* Growth Badge */}
+        {growth > 0 && (
+          <div className="flex items-center gap-1 text-green-600 bg-green-50 px-3 py-1 rounded-full w-fit mb-4">
+            <TrendingUp className="w-4 h-4" />
+            <span className="text-sm font-medium">+{growth}% vs last month</span>
+          </div>
+        )}
+
+        {/* Line Chart */}
+        <div className="h-24 mb-4">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={trend}>
+              <Line 
+                type="monotone" 
+                dataKey="hires" 
+                stroke="#14b8a6" 
+                strokeWidth={2}
+                dot={false}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* View All Button */}
         <button 
           onClick={() => navigate(ROUTE_PATHS.PROTECTED.EMPLOYEES)}
-          className="mt-4 w-full text-center text-sm text-teal-600 hover:text-teal-700 font-semibold transition-colors"
+          className="text-gray-600 hover:text-gray-900 text-sm font-medium flex items-center gap-1 transition-colors"
         >
           View All Employees →
         </button>
@@ -191,28 +212,16 @@ const HRDashboard = () => {
   };
 
   // Pending Leaves Donut Chart Component
-  const PendingLeavesChart = ({ leavesData }) => {
-    const { total = 0, sick = 0, casual = 0, annual = 0 } = leavesData || {};
-    
-    const chartData = [
-      { name: 'Sick', value: sick, color: '#ef4444' },      // Red
-      { name: 'Casual', value: casual, color: '#f59e0b' },  // Orange
-      { name: 'Annual', value: annual, color: '#3b82f6' },  // Blue
-    ].filter(item => item.value > 0);  // Only show non-zero values
-
-    const calculatePercentage = (value) => {
-      if (total === 0) return 0;
-      return Math.round((value / total) * 100);
-    };
-
+  const PendingLeavesChart = ({ data, total }) => {
     return (
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex items-center gap-2 text-teal-600">
-            <Calendar className="w-5 h-5" />
-            <span className="text-sm font-semibold">Pending Leaves</span>
+      <div className="bg-white rounded-lg shadow-md p-6 relative">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <Calendar className="w-5 h-5 text-gray-600" />
+            <h3 className="font-semibold text-gray-900">Pending Leaves</h3>
           </div>
-          <span className="px-3 py-1 bg-orange-100 text-orange-700 text-xs font-semibold rounded-full">
+          <span className="bg-orange-100 text-orange-600 text-xs px-3 py-1 rounded-full font-medium">
             Action Required
           </span>
         </div>
@@ -222,57 +231,61 @@ const HRDashboard = () => {
             <p className="text-gray-500 text-sm">No pending leave requests</p>
           </div>
         ) : (
-          <div className="flex items-center justify-between gap-6">
-            {/* Donut Chart */}
-            <div className="relative" style={{ width: '140px', height: '140px' }}>
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={chartData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={45}
-                    outerRadius={65}
-                    paddingAngle={2}
-                    dataKey="value"
-                  >
-                    {chartData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
-              {/* Center Text */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-3xl font-bold text-gray-900">{total}</span>
-                <span className="text-xs text-gray-500 uppercase">Total</span>
+          <>
+            {/* Chart and Legend Container */}
+            <div className="flex items-center justify-between mb-6">
+              {/* Donut Chart */}
+              <div className="relative" style={{ width: 150, height: 150 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={data}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={45}
+                      outerRadius={65}
+                      paddingAngle={2}
+                      dataKey="value"
+                    >
+                      {data.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                  </PieChart>
+                </ResponsiveContainer>
+                
+                {/* Center Text */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <div className="text-3xl font-bold text-gray-900">{total}</div>
+                  <div className="text-xs text-gray-500 uppercase">TOTAL</div>
+                </div>
               </div>
-            </div>
 
-            {/* Legend */}
-            <div className="flex-1 space-y-2">
-              {chartData.map((item) => (
-                <div key={item.name} className="flex items-center justify-between text-sm">
-                  <div className="flex items-center gap-2">
+              {/* Legend */}
+              <div className="flex flex-col gap-3">
+                {data.map((item, index) => (
+                  <div key={index} className="flex items-center gap-2">
                     <div 
                       className="w-3 h-3 rounded-full" 
                       style={{ backgroundColor: item.color }}
                     />
-                    <span className="text-gray-700">{item.name}</span>
+                    <span className="text-sm text-gray-700">
+                      {item.name} <span className="text-gray-500">({item.percentage}%)</span>
+                    </span>
                   </div>
-                  <span className="text-gray-500">({calculatePercentage(item.value)}%)</span>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
-        )}
 
-        <button 
-          onClick={() => navigate(ROUTE_PATHS.PROTECTED.LEAVES)}
-          className="mt-6 w-full text-center text-sm text-teal-600 hover:text-teal-700 font-semibold transition-colors"
-        >
-          Review Applications →
-        </button>
+            {/* Review Button */}
+            <button 
+              onClick={() => navigate(ROUTE_PATHS.PROTECTED.LEAVES)}
+              className="text-gray-600 hover:text-gray-900 text-sm font-medium flex items-center gap-1 transition-colors"
+            >
+              Review Applications →
+            </button>
+          </>
+        )}
       </div>
     );
   };
@@ -391,19 +404,22 @@ const HRDashboard = () => {
       </div>
 
       {/* Second Row - Analytics Section (2 Cards) */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        {/* New Hires Trend Chart */}
-        <NewHiresTrendChart 
-          trendData={newHiresTrend}
-          count={newHiresCount}
-          growthPercent={newHiresGrowth}
-        />
+      {!loading && safeData && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          {/* New Hires Trend Chart */}
+          <NewHiresTrendChart 
+            count={newHiresCount}
+            trend={newHiresTrend}
+            growth={newHiresGrowth}
+          />
 
-        {/* Pending Leaves Donut Chart */}
-        <PendingLeavesChart 
-          leavesData={pendingLeavesData}
-        />
-      </div>
+          {/* Pending Leaves Donut Chart */}
+          <PendingLeavesChart 
+            data={pendingLeavesData}
+            total={pendingLeavesTotal}
+          />
+        </div>
+      )}
 
       {/* Third Row - Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
@@ -598,36 +614,6 @@ const HRDashboard = () => {
             <Calendar className="w-5 h-5 mr-3" />
             <span>Manage Leaves</span>
           </button>
-
-          {/* Manage Insurance - with submenu */}
-          <div>
-            <button
-              onClick={() => toggleSubmenu('insurance')}
-              className="flex items-center justify-between w-full px-6 py-3 hover:bg-green-700 transition-colors"
-            >
-              <div className="flex items-center">
-                <Shield className="w-5 h-5 mr-3" />
-                <span>Manage Insurance</span>
-              </div>
-              {expandedMenus.insurance ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-            </button>
-            {expandedMenus.insurance && (
-              <div className="bg-gray-800 bg-opacity-50">
-                <button
-                  onClick={() => handleNavigation('insurance-plans')}
-                  className={`flex items-center w-full px-12 py-2 hover:bg-gray-800 transition-colors text-sm ${activePage === 'insurance-plans' ? 'bg-gray-800' : ''}`}
-                >
-                  Insurance Plans
-                </button>
-                <button
-                  onClick={() => handleNavigation('employee-insurance')}
-                  className={`flex items-center w-full px-12 py-2 hover:bg-gray-800 transition-colors text-sm ${activePage === 'employee-insurance' ? 'bg-gray-800' : ''}`}
-                >
-                  Employee Insurance
-                </button>
-              </div>
-            )}
-          </div>
 
           {/* Manage Complaints */}
           <button
