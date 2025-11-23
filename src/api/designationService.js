@@ -17,6 +17,18 @@ export const designationService = {
   },
 
   /**
+   * Fetch designations filtered by department.
+   *
+   * @param {number} departmentId - Department identifier.
+   * @returns {Promise<object>} API response containing designations.
+   */
+  fetchDesignationsByDepartment(departmentId) {
+    return request(`${API_ENDPOINTS.designations.list()}?department_id=${departmentId}`, {
+      method: "GET",
+    });
+  },
+
+  /**
    * Create a new designation.
    *
    * @param {{ name: string }} payload - Designation payload.
@@ -32,14 +44,17 @@ export const designationService = {
   /**
    * Update an existing designation.
    *
-   * @param {number|string} id - Designation identifier.
-   * @param {{ name: string }} payload - Updated payload.
+   * @param {string} designationName - Current designation name (used in URL).
+   * @param {string} newName - New designation name.
    * @returns {Promise<object>} API response.
    */
-  updateDesignation(id, payload) {
-    return request(API_ENDPOINTS.designations.update(id), {
+  updateDesignation(designationName, newName) {
+    return request(API_ENDPOINTS.designations.update(designationName), {
       method: "PUT",
-      body: payload,
+      body: {
+        to_update: "designation_name",
+        new_val: newName,
+      },
     });
   },
 

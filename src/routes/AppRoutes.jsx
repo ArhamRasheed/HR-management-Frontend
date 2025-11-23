@@ -10,6 +10,10 @@ import About from "../../pages/About";
 import DepartmentsPage from "../../pages/DepartmentsPage";
 import DesignationsPage from "../../pages/DesignationsPage";
 import EmployeesPage from "../../pages/EmployeesPage";
+import AttendancePage from "../../pages/AttendancePage";
+import ComplaintsPage from "../../pages/ComplaintsPage";
+import CandidatesPage from "../../pages/CandidatesPage";
+import PayrollPage from "../../pages/PayrollPage";
 
 const { PUBLIC, PROTECTED } = ROUTE_PATHS;
 
@@ -116,6 +120,50 @@ const ProtectedRoutes = () => {
                 routePath={PROTECTED.DESIGNATIONS}
               >
                 <DesignationsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={PROTECTED.ATTENDANCE}
+            element={
+              <ProtectedRoute
+                allowedDepartments={[DEPARTMENTS.HR]}
+                routePath={PROTECTED.ATTENDANCE}
+              >
+                <AttendancePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={PROTECTED.COMPLAINTS}
+            element={
+              <ProtectedRoute
+                allowedDepartments={[DEPARTMENTS.HR]}
+                routePath={PROTECTED.COMPLAINTS}
+              >
+                <ComplaintsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={PROTECTED.CANDIDATES}
+            element={
+              <ProtectedRoute
+                allowedDepartments={[DEPARTMENTS.HR]}
+                routePath={PROTECTED.CANDIDATES}
+              >
+                <CandidatesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={PROTECTED.PAYROLL}
+            element={
+              <ProtectedRoute
+                allowedDepartments={[DEPARTMENTS.HR]}
+                routePath={PROTECTED.PAYROLL}
+              >
+                <PayrollPage />
               </ProtectedRoute>
             }
           />

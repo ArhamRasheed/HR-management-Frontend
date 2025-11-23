@@ -1,136 +1,152 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import TopNav from "../components/top_nav";
+import { fetchDesignations } from "../src/store/slices/designationSlice";
+import UpdateDesignationModal from "../src/components/UpdateDesignationModal";
 import Footer from "../components/footer";
-import DataTable from "../components/table";
-import {
-  addDesignation,
-  clearDesignationStatus,
-  deleteDesignation,
-  fetchDesignations,
-  updateDesignation,
-} from "../src/store/slices/designationSlice";
-import { AlertTriangle, CheckCircle2 } from "lucide-react";
 
-export default function DesignationsPage() {
+const DesignationsPage = () => {
   const dispatch = useDispatch();
-  const { designations, loading, error, lastActionMessage } = useSelector(
-    (state) => state.designations
-  );
+  const { designations, loading, error } = useSelector((state) => state.designations);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [selectedDesignation, setSelectedDesignation] = useState(null);
 
   useEffect(() => {
     dispatch(fetchDesignations());
-    return () => {
-      dispatch(clearDesignationStatus());
-    };
   }, [dispatch]);
 
-  const onAdd = async (name, toast) => {
-    const action = await dispatch(addDesignation({ name }));
-    if (addDesignation.fulfilled.match(action)) {
-      toast(action.payload?.message || "Designation created successfully.");
-    } else {
-      toast(action.payload || "Unable to add designation.");
-    }
+  // Format ID to display as "DES001", "DES002", etc.
+  const formatDesignationId = (id) => {
+    return `DES${String(id).padStart(3, "0")}`;
   };
 
-  const onUpdate = async (id, name, toast) => {
-    const action = await dispatch(updateDesignation({ id, name }));
-    if (updateDesignation.fulfilled.match(action)) {
-      toast(action.payload?.message || "Designation updated successfully.");
-    } else {
-      toast(action.payload || "Unable to update designation.");
-    }
+  const handleOpenUpdateModal = (designation) => {
+    setSelectedDesignation(designation);
+    setShowUpdateModal(true);
   };
-
-  const onDelete = async (id, toast) => {
-    const action = await dispatch(deleteDesignation({ id }));
-    if (deleteDesignation.fulfilled.match(action)) {
-      toast(action.payload?.message || "Designation deleted successfully.");
-    } else {
-      toast(action.payload || "Unable to delete designation.");
-    }
-  };
-
-  const isEmpty = !loading && designations.length === 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-emerald-100">
-      <TopNav />
-      <div className="max-w-6xl mx-auto px-6 py-10 space-y-6">
-        <header className="bg-white/90 backdrop-blur rounded-3xl shadow-xl p-6 border border-white/70">
-          <p className="text-sm uppercase text-emerald-500 tracking-[0.3em]">People Success</p>
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mt-4">
-            <div>
-              <h1 className="text-3xl font-black text-gray-900">Designation Matrix</h1>
-              <p className="text-gray-600 mt-2">
-                Keep every role crystal clear so your teams understand their impact.
-              </p>
-            </div>
-            {lastActionMessage && (
-              <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-2 rounded-2xl shadow-sm">
-                <CheckCircle2 className="w-4 h-4" />
-                <span className="text-sm font-medium">{lastActionMessage}</span>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header - Same as EmployeesPage */}
+      <header className="bg-gray-900 text-white shadow-md">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-8">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-white rounded flex items-center justify-center">
+                <span className="text-gray-900 font-bold text-sm">HR</span>
               </div>
-            )}
-          </div>
-        </header>
-
-        {error && (
-          <div className="flex items-center gap-3 bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded-2xl shadow">
-            <AlertTriangle className="w-5 h-5 text-amber-500" />
-            <div className="flex-1">
-              <p className="text-sm font-semibold">We could not load designations</p>
-              <p className="text-xs opacity-90">{error}</p>
+              <h1 className="text-xl font-bold">HRMS</h1>
             </div>
-            <button
-              onClick={() => dispatch(fetchDesignations())}
-              className="text-xs font-semibold text-amber-700 underline-offset-4 hover:underline"
-            >
-              Retry
-            </button>
+            <nav className="hidden md:flex items-center gap-6 text-sm">
+              <a href="/hr-dashboard" className="hover:text-gray-300">Dashboard</a>
+              <a href="/employees" className="hover:text-gray-300">Employees</a>
+              <a href="/recruitment/candidates" className="hover:text-gray-300">Candidates</a>
+              <a href="/departments" className="hover:text-gray-300">Departments</a>
+              <a href="/designations" className="text-white font-semibold border-b-2 border-white pb-1">
+                Designations
+              </a>
+              <a href="/reports" className="hover:text-gray-300">Reports</a>
+              <a href="/payroll" className="hover:text-gray-300">Payroll</a>
+            </nav>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-sm">John Doe</span>
+            <div className="w-10 h-10 bg-teal-500 rounded-full flex items-center justify-center text-white font-semibold">
+              JD
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-6 py-8">
+        {/* Page Header */}
+        <div className="mb-6">
+          <h1 className="text-4xl font-bold text-gray-900">Designations</h1>
+        </div>
+
+        {/* Error Banner */}
+        {error && (
+          <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-4">
+            <p className="text-sm text-red-800">{error}</p>
           </div>
         )}
 
-        <section className="bg-white/90 backdrop-blur rounded-3xl shadow-xl border border-white/70 p-6">
-          {loading && <SkeletonGrid />}
-          {isEmpty && (
-            <div className="border border-dashed border-emerald-200 rounded-2xl p-8 text-center bg-emerald-50/40">
-              <p className="text-lg font-semibold text-emerald-800">No designations yet</p>
-              <p className="text-sm text-emerald-600 mt-2">
-                Add your leadership, management, and specialist roles to get started.
-              </p>
-            </div>
-          )}
+        {/* Designations Table Card */}
+        <div className="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
+          <div className="p-6">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">Designations</h2>
 
-          <div className="mt-6">
-            <DataTable
-              title="Designations"
-              items={designations}
-              loading={loading}
-              columns={[
-                { header: "ID", accessor: "id" },
-                { header: "Designation Name", accessor: "designation_name" },
-              ]}
-              onAdd={onAdd}
-              onUpdate={onUpdate}
-              onDelete={onDelete}
-            />
+            {/* Loading State */}
+            {loading && (
+              <div className="p-12 text-center">
+                <p className="text-gray-600">Loading designations...</p>
+              </div>
+            )}
+
+            {/* Empty State */}
+            {!loading && designations.length === 0 && (
+              <div className="p-12 text-center">
+                <p className="text-gray-600">No designations found.</p>
+              </div>
+            )}
+
+            {/* Table */}
+            {!loading && designations.length > 0 && (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-100">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
+                        ID
+                      </th>
+                      <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
+                        Designation Name
+                      </th>
+                      <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {designations.map((designation) => (
+                      <tr key={designation.id} className="hover:bg-gray-50">
+                        <td className="px-6 py-4 text-sm text-gray-600">
+                          {formatDesignationId(designation.id)}
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-900">
+                          {designation.designation_name}
+                        </td>
+                        <td className="px-6 py-4">
+                          <button
+                            onClick={() => handleOpenUpdateModal(designation)}
+                            className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded hover:bg-green-700 transition-colors"
+                          >
+                            Update
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
-        </section>
-      </div>
+        </div>
+      </main>
+
+      {/* Update Designation Modal */}
+      <UpdateDesignationModal
+        isOpen={showUpdateModal}
+        onClose={() => {
+          setShowUpdateModal(false);
+          setSelectedDesignation(null);
+        }}
+        designation={selectedDesignation}
+      />
+
       <Footer />
     </div>
   );
-}
+};
 
-const SkeletonGrid = () => (
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-    {[...Array(4)].map((_, index) => (
-      <div
-        key={`designation-skeleton-${index}`}
-        className="h-24 rounded-2xl bg-gradient-to-r from-emerald-100/60 via-white to-emerald-100 animate-pulse border border-white/60"
-      />
-    ))}
-  </div>
-);
+export default DesignationsPage;

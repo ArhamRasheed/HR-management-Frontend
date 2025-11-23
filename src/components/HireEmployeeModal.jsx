@@ -85,9 +85,22 @@ const HireEmployeeModal = ({ isOpen, onClose, onHireSuccess }) => {
 
   if (!isOpen) return null;
 
+  // Handle click outside modal to close
+  const handleOverlayClick = (e) => {
+    if (e.target === e.currentTarget && !loading) {
+      onClose();
+    }
+  };
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-200/30">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4 relative">
+    <div className="fixed inset-0 flex items-center justify-center z-50">
+      {/* Blurred background overlay - NOT black */}
+      <div
+        className="absolute inset-0 backdrop-blur-sm bg-white/30"
+        onClick={handleOverlayClick}
+      />
+      {/* Modal content */}
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4 relative z-10">
         {/* Header */}
         <div className="px-6 py-6 border-b border-gray-200">
           <div className="flex items-center gap-4">
