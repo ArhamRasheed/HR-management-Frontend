@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
   Menu, X, User, Calendar, Shield, Clock, AlertCircle, Home, Users,
   FileText, Settings, LogOut, ChevronDown, ChevronRight, Briefcase,
-  UserPlus, Mail, Info, Bell, TrendingUp, AlertTriangle, Grid
+  UserPlus, Mail, Info, Bell, TrendingUp, AlertTriangle, Grid, DollarSign
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -478,6 +478,15 @@ const HRDashboard = () => {
             <span>Manage Employees</span>
           </button>
 
+          {/* Manage Payroll */}
+          <button
+            onClick={() => navigate(ROUTE_PATHS.PROTECTED.PAYROLL)}
+            className="flex items-center w-full px-6 py-3 hover:bg-green-700 transition-colors"
+          >
+            <DollarSign className="w-5 h-5 mr-3" />
+            <span>Manage Payroll</span>
+          </button>
+
           {/* Manage Designations */}
           <button
             onClick={() => navigate(ROUTE_PATHS.PROTECTED.DESIGNATIONS)}
@@ -485,6 +494,15 @@ const HRDashboard = () => {
           >
             <Briefcase className="w-5 h-5 mr-3" />
             <span>Manage Designations</span>
+          </button>
+
+          {/* Manage Attendance */}
+          <button
+            onClick={() => navigate(ROUTE_PATHS.PROTECTED.ATTENDANCE)}
+            className="flex items-center w-full px-6 py-3 hover:bg-green-700 transition-colors"
+          >
+            <Calendar className="w-5 h-5 mr-3" />
+            <span>Manage Attendance</span>
           </button>
 
           {/* Manage Leaves - with submenu */}
@@ -549,8 +567,8 @@ const HRDashboard = () => {
 
           {/* Manage Complaints */}
           <button
-            onClick={() => handleNavigation('manage-complaints')}
-            className={`flex items-center w-full px-6 py-3 hover:bg-green-700 transition-colors ${activePage === 'manage-complaints' ? 'bg-green-700 border-l-4 border-green-400' : ''}`}
+            onClick={() => navigate(ROUTE_PATHS.PROTECTED.COMPLAINTS)}
+            className="flex items-center w-full px-6 py-3 hover:bg-green-700 transition-colors"
           >
             <AlertCircle className="w-5 h-5 mr-3" />
             <span>Manage Complaints</span>
@@ -558,8 +576,8 @@ const HRDashboard = () => {
 
           {/* Manage Candidates */}
           <button
-            onClick={() => handleNavigation('manage-candidates')}
-            className={`flex items-center w-full px-6 py-3 hover:bg-green-700 transition-colors ${activePage === 'manage-candidates' ? 'bg-green-700 border-l-4 border-green-400' : ''}`}
+            onClick={() => navigate(ROUTE_PATHS.PROTECTED.CANDIDATES)}
+            className="flex items-center w-full px-6 py-3 hover:bg-green-700 transition-colors"
           >
             <UserPlus className="w-5 h-5 mr-3" />
             <span>Manage Candidates</span>

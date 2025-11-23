@@ -53,12 +53,12 @@ export const updateDesignation = createAsyncThunk(
   /**
    * Update designation thunk.
    *
-   * @param {{ id: number|string, name: string }} payload
+   * @param {{ oldName: string, newName: string }} payload
    * @param {import("@reduxjs/toolkit").ThunkAPI} thunkAPI
    */
-  async ({ id, name }, thunkAPI) => {
+  async ({ oldName, newName }, thunkAPI) => {
     try {
-      const response = await designationService.updateDesignation(id, { name });
+      const response = await designationService.updateDesignation(oldName, newName);
       await thunkAPI.dispatch(fetchDesignations());
       return response;
     } catch (error) {

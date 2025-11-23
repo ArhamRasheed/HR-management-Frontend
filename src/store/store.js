@@ -4,6 +4,9 @@ import departmentReducer from "./slices/departmentSlice";
 import designationReducer from "./slices/designationSlice";
 import dashboardReducer from "./slices/dashboardSlice";
 import employeeReducer from "./slices/employeeSlice";
+import attendanceReducer from "./slices/attendanceSlice";
+import complaintReducer from "./slices/complaintSlice";
+import candidateReducer from "./slices/candidateSlice";
 
 /**
  * Root Redux store configuration.
@@ -15,6 +18,9 @@ export const store = configureStore({
     designations: designationReducer,
     dashboard: dashboardReducer,
     employees: employeeReducer,
+    attendance: attendanceReducer,
+    complaints: complaintReducer,
+    candidates: candidateReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

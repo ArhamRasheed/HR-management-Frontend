@@ -166,11 +166,14 @@ const UpdateEmployeeModal = ({ isOpen, onClose, employee, onUpdateSuccess }) => 
   if (!isOpen) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
-      onClick={handleOverlayClick}
-    >
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 relative">
+    <div className="fixed inset-0 flex items-center justify-center z-50">
+      {/* Blurred background overlay - NOT black */}
+      <div
+        className="absolute inset-0 backdrop-blur-sm bg-white/30"
+        onClick={handleOverlayClick}
+      />
+      {/* Modal content */}
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 relative z-10">
         {/* Header */}
         <div className="px-6 py-4 border-b border-gray-200 flex items-start justify-between">
           <h2 className="text-xl font-bold text-gray-900">Update Employee</h2>

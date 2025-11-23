@@ -105,10 +105,11 @@ export const API_ENDPOINTS = {
     create: () => "/api/designations/add/",
     /**
      * Update a designation entry.
-     * @param {number|string} id - Designation identifier.
+     * @param {string} designationName - Designation name (used in URL path).
      * @returns {string} Designation update endpoint.
      */
-    update: (id) => `/api/designations/update/${id}/`,
+    update: (designationName) =>
+      `/api/designations/${encodeURIComponent(designationName)}/update/`,
     /**
      * Remove a designation entry.
      * @param {number|string} id - Designation identifier.
@@ -127,6 +128,28 @@ export const API_ENDPOINTS = {
      * @returns {string} Shortlisted candidates endpoint.
      */
     shortlisted: () => "/api/shortlisted-candidates/",
+    /**
+     * Fetch all interviewed candidates.
+     * @returns {string} Interviewed candidates endpoint.
+     */
+    interviewed: () => "/api/interviewed-candidates/",
+    /**
+     * Update candidate status.
+     * @returns {string} Candidate status update endpoint.
+     */
+    update: () => "/api/update_candidate/",
+    /**
+     * Add a new interviewed candidate.
+     * @returns {string} Add candidate endpoint.
+     */
+    add: () => "/api/add_candidate/",
+    /**
+     * Fetch allowed roles/positions for a department.
+     * @param {number|string} departmentId - Department identifier.
+     * @returns {string} Allowed roles endpoint.
+     */
+    allowedRoles: (departmentId) =>
+      `/api/allowed-roles/?department_id=${departmentId}`,
     /**
      * Fetch a single candidate profile.
      * @param {number|string} id - Candidate identifier.
@@ -150,7 +173,7 @@ export const API_ENDPOINTS = {
      * Retrieve payroll history entries.
      * @returns {string} Payroll history endpoint.
      */
-    history: () => "/api/payroll/history/",
+    history: () => "/api/payroll-history/",
     /**
      * Fetch payroll details for a specific cycle.
      * @param {number|string} id - Payroll identifier.
@@ -181,6 +204,37 @@ export const API_ENDPOINTS = {
      * @returns {string} Payroll report endpoint.
      */
     payroll: () => "/api/reports/payroll/",
+  },
+  attendance: {
+    /**
+     * View attendance records.
+     * @returns {string} Attendance view endpoint.
+     */
+    view: () => "/api/attendance/view/",
+  },
+  complaints: {
+    /**
+     * Fetch all complaints.
+     * @returns {string} Complaints list endpoint.
+     */
+    all: () => "/api/complain/all/",
+    /**
+     * Update complaint status.
+     * @param {number} id - The complaint ID.
+     * @returns {string} Complaint update endpoint.
+     */
+    update: (id) => `/api/complain/${id}/update/`,
+    /**
+     * Delete a complaint.
+     * @param {number} id - The complaint ID.
+     * @returns {string} Complaint delete endpoint.
+     */
+    delete: (id) => `/api/complain/${id}/delete/`,
+    /**
+     * Add a new complaint.
+     * @returns {string} Complaint add endpoint.
+     */
+    add: () => "/api/add_complain/",
   },
 };
 
