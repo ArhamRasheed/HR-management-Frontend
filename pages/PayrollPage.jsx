@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { Search, Calendar, CheckCircle2, Clock, XCircle, Play } from "lucide-react";
 import { payrollService } from "../src/api/payrollService";
 import PageHeader from "../src/components/PageHeader";
+import GeneratePayrollModal from "../src/components/GeneratePayrollModal";
 import Footer from "../components/footer";
 
 const PayrollPage = () => {
@@ -11,6 +12,7 @@ const PayrollPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [monthFilter, setMonthFilter] = useState("All Months");
   const [statusFilter, setStatusFilter] = useState("All Statuses");
+  const [isGenerateModalOpen, setIsGenerateModalOpen] = useState(false);
 
   useEffect(() => {
     fetchPayrollHistory();
@@ -49,8 +51,10 @@ const PayrollPage = () => {
 
   // Format currency
   const formatCurrency = (amount) => {
-    if (typeof amount !== "number") return "$0.00";
-    return `$${amount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    // Convert string to number if needed
+    const numAmount = typeof amount === "string" ? parseFloat(amount) : amount;
+    if (typeof numAmount !== "number" || isNaN(numAmount)) return "$0.00";
+    return `$${numAmount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   };
 
   // Get status badge
@@ -152,8 +156,12 @@ const PayrollPage = () => {
   };
 
   const handleGeneratePayroll = () => {
-    // TODO: Implement payroll generation
-    alert("Payroll generation feature coming soon!");
+    setIsGenerateModalOpen(true);
+  };
+
+  const handleGenerateSuccess = () => {
+    setIsGenerateModalOpen(false);
+    fetchPayrollHistory(); // Refresh the payroll list
   };
 
   return (
@@ -326,6 +334,13 @@ const PayrollPage = () => {
           </table>
         </div>
       </div>
+
+      {/* Generate Payroll Modal */}
+      <GeneratePayrollModal
+        isOpen={isGenerateModalOpen}
+        onClose={() => setIsGenerateModalOpen(false)}
+        onSuccess={handleGenerateSuccess}
+      />
 
       <Footer />
     </div>

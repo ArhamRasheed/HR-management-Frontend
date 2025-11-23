@@ -170,6 +170,11 @@ export const API_ENDPOINTS = {
      */
     run: () => "/api/payroll/generate/",
     /**
+     * Generate payroll for employees for a specific month and year.
+     * @returns {string} Payroll generation endpoint with query parameters.
+     */
+    generate: () => "/api/payroll-generate/employee/",
+    /**
      * Retrieve payroll history entries.
      * @returns {string} Payroll history endpoint.
      */
