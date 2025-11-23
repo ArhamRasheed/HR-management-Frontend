@@ -30,7 +30,7 @@ export const authService = {
       method: "POST",
       credentials: "include",
     });
-  },
+  },  
 
   /**
    * Verify whether the session is still active.

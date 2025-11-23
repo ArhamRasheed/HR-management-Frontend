@@ -14,6 +14,7 @@ import AttendancePage from "../../pages/AttendancePage";
 import ComplaintsPage from "../../pages/ComplaintsPage";
 import CandidatesPage from "../../pages/CandidatesPage";
 import PayrollPage from "../../pages/PayrollPage";
+import ReportsPage from "../../pages/ReportsPage";
 
 const { PUBLIC, PROTECTED } = ROUTE_PATHS;
 
@@ -223,7 +224,7 @@ const ProtectedRoutes = () => {
                 allowedDepartments={[DEPARTMENTS.HR, DEPARTMENTS.FINANCE]}
                 routePath={PROTECTED.REPORTS}
               >
-                <ComingSoonPage title="Reports & Insights" />
+                <ReportsPage />
               </ProtectedRoute>
             }
           />

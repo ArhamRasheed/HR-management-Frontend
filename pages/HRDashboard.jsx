@@ -592,6 +592,15 @@ const HRDashboard = () => {
             <span>Manage Candidates</span>
           </button>
 
+          {/* Reports */}
+          <button
+            onClick={() => navigate(ROUTE_PATHS.PROTECTED.REPORTS)}
+            className="flex items-center w-full px-6 py-3 hover:bg-gray-800 transition-colors"
+          >
+            <FileText className="w-5 h-5 mr-3" />
+            <span>Reports</span>
+          </button>
+
           {/* About */}
           <button
             onClick={() => navigate(ROUTE_PATHS.PROTECTED.ABOUT)}
@@ -669,7 +678,12 @@ const HRDashboard = () => {
                 >
                   Designations
                 </button>
-                <button className="hover:text-gray-300">Reports</button>
+                <button 
+                  onClick={() => navigate(ROUTE_PATHS.PROTECTED.REPORTS)}
+                  className="hover:text-gray-300"
+                >
+                  Reports
+                </button>
                 <button 
                   onClick={() => navigate(ROUTE_PATHS.PROTECTED.PAYROLL)}
                   className="hover:text-gray-300"
