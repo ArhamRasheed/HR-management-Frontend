@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { Search, Calendar, CheckCircle2, Clock, XCircle, Play } from "lucide-react";
 import { payrollService } from "../src/api/payrollService";
+import PageHeader from "../src/components/PageHeader";
 import Footer from "../components/footer";
 
 const PayrollPage = () => {
@@ -157,35 +158,7 @@ const PayrollPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-gray-900 text-white py-4 px-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="bg-white p-2 rounded">
-              <svg className="w-6 h-6 text-gray-900" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-              </svg>
-            </div>
-            <h1 className="text-xl font-bold">HRMS</h1>
-          </div>
-
-          <nav className="flex gap-6">
-            <a href="/hr-dashboard" className="hover:text-gray-300">Dashboard</a>
-            <a href="/employees" className="hover:text-gray-300">Employees</a>
-            <a href="/payroll" className="text-white font-semibold">Payroll</a>
-            <a href="/departments" className="hover:text-gray-300">Departments</a>
-            <a href="/designations" className="hover:text-gray-300">Designations</a>
-            <a href="/reports" className="hover:text-gray-300">Reports</a>
-          </nav>
-
-          <div className="flex items-center gap-3">
-            <span className="text-sm">John Doe</span>
-            <div className="w-10 h-10 bg-teal-500 rounded-full flex items-center justify-center text-white font-semibold">
-              JD
-            </div>
-          </div>
-        </div>
-      </header>
+      <PageHeader />
 
       {/* Main Content */}
       <div className="container mx-auto px-6 py-8">

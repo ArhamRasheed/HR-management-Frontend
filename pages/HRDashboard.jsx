@@ -10,6 +10,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 import { fetchDashboard } from '../src/store/slices/dashboardSlice';
 import { ROUTE_PATHS } from '../src/constants/routePaths';
 import { API_ENDPOINTS, API_BASE_URL } from '../src/constants/apiEndpoints';
+import { getUserInitials, getUserDisplayName } from '../src/utils/userHelpers';
 import About from './About';
 import Contact from './Contact';
 
@@ -17,6 +18,7 @@ const HRDashboard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { dashboardData: data, loading, error } = useSelector(state => state.dashboard);
+  const { user: authUser, loading: authLoading } = useSelector(state => state.auth);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activePage, setActivePage] = useState('dashboard');
   const [expandedMenus, setExpandedMenus] = useState({});
@@ -44,9 +46,9 @@ const HRDashboard = () => {
         employees: dept?.employees || dept?.employee_count || 0  // Support both field names
       }))
       : [],
-    // Add fallback user info if missing
-    full_name: data.full_name || 'Admin User',
-    designation: data.designation || 'HR Manager'
+    // Add fallback user info if missing (use auth user if available)
+    full_name: authUser?.full_name || data.full_name || 'Admin User',
+    designation: authUser?.designation || data.designation || 'HR Manager'
   } : null;
 
   const handleLogOut = () => {
@@ -405,7 +407,7 @@ const HRDashboard = () => {
       default:
         return (
           <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-2xl font-bold text-green-800 mb-4">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">
               {activePage.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
             </h2>
             <p className="text-gray-600">
@@ -441,7 +443,7 @@ const HRDashboard = () => {
           <p className="text-gray-600 mb-4">{error}</p>
           <button
             onClick={() => dispatch(fetchDashboard())}
-            className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+            className="px-6 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
           >
             Retry
           </button>
@@ -453,7 +455,7 @@ const HRDashboard = () => {
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar */}
-      <aside className={`${sidebarOpen ? 'w-64' : 'w-0'} bg-gradient-to-b from-green-800 to-green-900 text-white transition-all duration-300 overflow-hidden`}>
+      <aside className={`${sidebarOpen ? 'w-64' : 'w-0'} bg-gray-900 text-white transition-all duration-300 overflow-hidden`}>
         <div className="p-6">
           <h2 className="text-2xl font-bold">HR Portal</h2>
         </div>
@@ -461,7 +463,7 @@ const HRDashboard = () => {
           {/* Dashboard */}
           <button
             onClick={() => handleNavigation('dashboard')}
-            className={`flex items-center w-full px-6 py-3 hover:bg-green-700 transition-colors ${activePage === 'dashboard' ? 'bg-green-700 border-l-4 border-green-400' : ''}`}
+            className={`flex items-center w-full px-6 py-3 hover:bg-gray-800 transition-colors ${activePage === 'dashboard' ? 'bg-gray-800 border-l-4 border-teal-500' : ''}`}
           >
             <Home className="w-5 h-5 mr-3" />
             <span>Dashboard</span>
@@ -470,7 +472,7 @@ const HRDashboard = () => {
           {/* Manage Departments */}
           <button
             onClick={() => navigate(ROUTE_PATHS.PROTECTED.DEPARTMENTS)}
-            className={`flex items-center w-full px-6 py-3 hover:bg-green-700 transition-colors ${activePage === 'manage-departments' ? 'bg-green-700 border-l-4 border-green-400' : ''}`}
+            className={`flex items-center w-full px-6 py-3 hover:bg-gray-800 transition-colors ${activePage === 'manage-departments' ? 'bg-gray-800 border-l-4 border-teal-500' : ''}`}
           >
             <Grid className="w-5 h-5 mr-3" />
             <span>Manage Departments</span>
@@ -479,7 +481,7 @@ const HRDashboard = () => {
           {/* Manage Employees */}
           <button
             onClick={() => navigate(ROUTE_PATHS.PROTECTED.EMPLOYEES)}
-            className="flex items-center w-full px-6 py-3 hover:bg-green-700 transition-colors"
+            className="flex items-center w-full px-6 py-3 hover:bg-gray-800 transition-colors"
           >
             <Users className="w-5 h-5 mr-3" />
             <span>Manage Employees</span>
@@ -488,7 +490,7 @@ const HRDashboard = () => {
           {/* Manage Payroll */}
           <button
             onClick={() => navigate(ROUTE_PATHS.PROTECTED.PAYROLL)}
-            className="flex items-center w-full px-6 py-3 hover:bg-green-700 transition-colors"
+            className="flex items-center w-full px-6 py-3 hover:bg-gray-800 transition-colors"
           >
             <DollarSign className="w-5 h-5 mr-3" />
             <span>Manage Payroll</span>
@@ -497,7 +499,7 @@ const HRDashboard = () => {
           {/* Manage Designations */}
           <button
             onClick={() => navigate(ROUTE_PATHS.PROTECTED.DESIGNATIONS)}
-            className={`flex items-center w-full px-6 py-3 hover:bg-green-700 transition-colors ${activePage === 'manage-designations' ? 'bg-green-700 border-l-4 border-green-400' : ''}`}
+            className={`flex items-center w-full px-6 py-3 hover:bg-gray-800 transition-colors ${activePage === 'manage-designations' ? 'bg-gray-800 border-l-4 border-teal-500' : ''}`}
           >
             <Briefcase className="w-5 h-5 mr-3" />
             <span>Manage Designations</span>
@@ -506,7 +508,7 @@ const HRDashboard = () => {
           {/* Manage Attendance */}
           <button
             onClick={() => navigate(ROUTE_PATHS.PROTECTED.ATTENDANCE)}
-            className="flex items-center w-full px-6 py-3 hover:bg-green-700 transition-colors"
+            className="flex items-center w-full px-6 py-3 hover:bg-gray-800 transition-colors"
           >
             <Calendar className="w-5 h-5 mr-3" />
             <span>Manage Attendance</span>
@@ -525,16 +527,16 @@ const HRDashboard = () => {
               {expandedMenus.leaves ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
             </button>
             {expandedMenus.leaves && (
-              <div className="bg-green-900 bg-opacity-50">
+              <div className="bg-gray-800 bg-opacity-50">
                 <button
                   onClick={() => handleNavigation('leave-types')}
-                  className={`flex items-center w-full px-12 py-2 hover:bg-green-700 transition-colors text-sm ${activePage === 'leave-types' ? 'bg-green-700' : ''}`}
+                  className={`flex items-center w-full px-12 py-2 hover:bg-gray-800 transition-colors text-sm ${activePage === 'leave-types' ? 'bg-gray-800' : ''}`}
                 >
                   Leave Types
                 </button>
                 <button
                   onClick={() => handleNavigation('leave-applications')}
-                  className={`flex items-center w-full px-12 py-2 hover:bg-green-700 transition-colors text-sm ${activePage === 'leave-applications' ? 'bg-green-700' : ''}`}
+                  className={`flex items-center w-full px-12 py-2 hover:bg-gray-800 transition-colors text-sm ${activePage === 'leave-applications' ? 'bg-gray-800' : ''}`}
                 >
                   Leave Applications
                 </button>
@@ -555,16 +557,16 @@ const HRDashboard = () => {
               {expandedMenus.insurance ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
             </button>
             {expandedMenus.insurance && (
-              <div className="bg-green-900 bg-opacity-50">
+              <div className="bg-gray-800 bg-opacity-50">
                 <button
                   onClick={() => handleNavigation('insurance-plans')}
-                  className={`flex items-center w-full px-12 py-2 hover:bg-green-700 transition-colors text-sm ${activePage === 'insurance-plans' ? 'bg-green-700' : ''}`}
+                  className={`flex items-center w-full px-12 py-2 hover:bg-gray-800 transition-colors text-sm ${activePage === 'insurance-plans' ? 'bg-gray-800' : ''}`}
                 >
                   Insurance Plans
                 </button>
                 <button
                   onClick={() => handleNavigation('employee-insurance')}
-                  className={`flex items-center w-full px-12 py-2 hover:bg-green-700 transition-colors text-sm ${activePage === 'employee-insurance' ? 'bg-green-700' : ''}`}
+                  className={`flex items-center w-full px-12 py-2 hover:bg-gray-800 transition-colors text-sm ${activePage === 'employee-insurance' ? 'bg-gray-800' : ''}`}
                 >
                   Employee Insurance
                 </button>
@@ -575,7 +577,7 @@ const HRDashboard = () => {
           {/* Manage Complaints */}
           <button
             onClick={() => navigate(ROUTE_PATHS.PROTECTED.COMPLAINTS)}
-            className="flex items-center w-full px-6 py-3 hover:bg-green-700 transition-colors"
+            className="flex items-center w-full px-6 py-3 hover:bg-gray-800 transition-colors"
           >
             <AlertCircle className="w-5 h-5 mr-3" />
             <span>Manage Complaints</span>
@@ -584,7 +586,7 @@ const HRDashboard = () => {
           {/* Manage Candidates */}
           <button
             onClick={() => navigate(ROUTE_PATHS.PROTECTED.CANDIDATES)}
-            className="flex items-center w-full px-6 py-3 hover:bg-green-700 transition-colors"
+            className="flex items-center w-full px-6 py-3 hover:bg-gray-800 transition-colors"
           >
             <UserPlus className="w-5 h-5 mr-3" />
             <span>Manage Candidates</span>
@@ -593,7 +595,7 @@ const HRDashboard = () => {
           {/* About */}
           <button
             onClick={() => navigate(ROUTE_PATHS.PROTECTED.ABOUT)}
-            className={`flex items-center w-full px-6 py-3 hover:bg-green-700 transition-colors ${activePage === 'about' ? 'bg-green-700 border-l-4 border-green-400' : ''}`}
+            className={`flex items-center w-full px-6 py-3 hover:bg-gray-800 transition-colors ${activePage === 'about' ? 'bg-gray-800 border-l-4 border-teal-500' : ''}`}
           >
             <Info className="w-5 h-5 mr-3" />
             <span>About</span>
@@ -602,7 +604,7 @@ const HRDashboard = () => {
           {/* Contact */}
           <button
             onClick={() => navigate(ROUTE_PATHS.PROTECTED.CONTACT)}
-            className={`flex items-center w-full px-6 py-3 hover:bg-green-700 transition-colors ${activePage === 'contact' ? 'bg-green-700 border-l-4 border-green-400' : ''}`}
+            className={`flex items-center w-full px-6 py-3 hover:bg-gray-800 transition-colors ${activePage === 'contact' ? 'bg-gray-800 border-l-4 border-teal-500' : ''}`}
           >
             <Mail className="w-5 h-5 mr-3" />
             <span>Contact</span>
@@ -611,7 +613,7 @@ const HRDashboard = () => {
           {/* Settings */}
           <button
             onClick={() => handleNavigation('settings')}
-            className={`flex items-center w-full px-6 py-3 hover:bg-green-700 transition-colors ${activePage === 'settings' ? 'bg-green-700 border-l-4 border-green-400' : ''}`}
+            className={`flex items-center w-full px-6 py-3 hover:bg-gray-800 transition-colors ${activePage === 'settings' ? 'bg-gray-800 border-l-4 border-teal-500' : ''}`}
           >
             <Settings className="w-5 h-5 mr-3" />
             <span>Settings</span>
@@ -621,53 +623,107 @@ const HRDashboard = () => {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Header/Navbar */}
-        <header className="bg-white shadow-md z-10">
-          <div className="flex items-center justify-between px-6 py-4">
-            <div className="flex items-center">
-              <button onClick={() => setSidebarOpen(!sidebarOpen)} className="text-gray-600 hover:text-green-600">
-                {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-              </button>
-              <h1 className="ml-4 text-2xl font-bold text-green-800">HR Portal</h1>
+        {/* Header/Navbar - Matching DepartmentsPage style */}
+        <header className="bg-gray-900 text-white shadow-md z-10">
+          <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div className="flex items-center gap-8">
+              <div className="flex items-center gap-2">
+                <button onClick={() => setSidebarOpen(!sidebarOpen)} className="text-white hover:text-gray-300">
+                  {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                </button>
+                <div className="w-8 h-8 bg-white rounded flex items-center justify-center ml-2">
+                  <span className="text-gray-900 font-bold text-sm">HR</span>
+                </div>
+                <h1 className="text-xl font-bold ml-2">HRMS</h1>
+              </div>
+
+              {/* Navigation links */}
+              <nav className="hidden md:flex items-center gap-6 text-sm">
+                <button 
+                  onClick={() => handleNavigation('dashboard')}
+                  className={`hover:text-gray-300 pb-1 ${activePage === 'dashboard' ? 'border-b-2 border-white font-semibold' : ''}`}
+                >
+                  Dashboard
+                </button>
+                <button 
+                  onClick={() => navigate(ROUTE_PATHS.PROTECTED.EMPLOYEES)}
+                  className="hover:text-gray-300"
+                >
+                  Employees
+                </button>
+                <button 
+                  onClick={() => navigate(ROUTE_PATHS.PROTECTED.CANDIDATES)}
+                  className="hover:text-gray-300"
+                >
+                  Candidates
+                </button>
+                <button 
+                  onClick={() => navigate(ROUTE_PATHS.PROTECTED.DEPARTMENTS)}
+                  className="hover:text-gray-300"
+                >
+                  Departments
+                </button>
+                <button 
+                  onClick={() => navigate(ROUTE_PATHS.PROTECTED.DESIGNATIONS)}
+                  className="hover:text-gray-300"
+                >
+                  Designations
+                </button>
+                <button className="hover:text-gray-300">Reports</button>
+                <button 
+                  onClick={() => navigate(ROUTE_PATHS.PROTECTED.PAYROLL)}
+                  className="hover:text-gray-300"
+                >
+                  Payroll
+                </button>
+              </nav>
             </div>
 
-            <div className="flex items-center space-x-4">
+            {/* User Profile Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                className="flex items-center space-x-3 hover:bg-gray-800 rounded-lg p-2 transition-colors"
+              >
+                <div className="text-right">
+                  <p className="text-sm font-medium text-white">
+                    {authLoading ? 'Loading...' : getUserDisplayName(authUser?.full_name, 'Admin User')}
+                  </p>
+                  <p className="text-xs text-gray-300">{authUser?.designation || 'N/A'}</p>
+                </div>
+                <div className="w-10 h-10 bg-teal-500 rounded-full flex items-center justify-center text-white font-semibold">
+                  {authLoading ? (
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    getUserInitials(authUser?.full_name, 2)
+                  )}
+                </div>
+                <ChevronDown className="w-4 h-4 text-gray-300" />
+              </button>
 
-              {/* User Profile Dropdown */}
-              <div className="relative">
-                <button
-                  onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                  className="flex items-center space-x-3 hover:bg-gray-100 rounded-lg p-2 transition-colors"
-                >
-                  <div className="text-right">
-                    <p className="text-sm font-medium text-gray-700">{safeData?.full_name || 'Unknown User'}</p>
-                    <p className="text-xs text-gray-500">{safeData?.designation || 'N/A'}</p>
+              {/* Profile Dropdown Menu */}
+              {profileDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 z-50">
+                  <div className="p-4 border-b border-gray-200">
+                    <p className="font-semibold text-gray-800">
+                      {getUserDisplayName(authUser?.full_name, 'Admin User')}
+                    </p>
+                    <p className="text-sm text-gray-500">{authUser?.designation || 'N/A'}</p>
+                    {authUser?.email && (
+                      <p className="text-xs text-gray-400 mt-1">{authUser.email}</p>
+                    )}
                   </div>
-                  <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center text-white font-bold">
-                    {(safeData?.full_name || 'U').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
+                  <div className="py-2">
+                    <button
+                      onClick={handleLogOut}
+                      className="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                    >
+                      <LogOut className="w-4 h-4 mr-3" />
+                      Logout
+                    </button>
                   </div>
-                  <ChevronDown className="w-4 h-4 text-gray-600" />
-                </button>
-
-                {/* Profile Dropdown Menu */}
-                {profileDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 z-50">
-                    <div className="p-4 border-b border-gray-200">
-                      <p className="font-semibold text-gray-800">{safeData?.full_name || 'Unknown User'}</p>
-                      <p className="text-sm text-gray-500">{safeData?.designation || 'N/A'}</p>
-                    </div>
-                    <div className="py-2">
-                      <button
-                        onClick={handleLogOut}
-                        className="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50"
-                      >
-                        <LogOut className="w-4 h-4 mr-3" />
-                        Logout
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           </div>
         </header>
@@ -682,8 +738,8 @@ const HRDashboard = () => {
           <div className="flex items-center justify-between text-sm text-gray-600">
             <p>© 2024 HR Management System. All rights reserved.</p>
             <div className="flex space-x-4">
-              <button onClick={() => navigate(ROUTE_PATHS.PROTECTED.ABOUT)} className="hover:text-green-600">About</button>
-              <button onClick={() => navigate(ROUTE_PATHS.PROTECTED.CONTACT)} className="hover:text-green-600">Contact</button>
+              <button onClick={() => navigate(ROUTE_PATHS.PROTECTED.ABOUT)} className="hover:text-teal-600">About</button>
+              <button onClick={() => navigate(ROUTE_PATHS.PROTECTED.CONTACT)} className="hover:text-teal-600">Contact</button>
             </div>
           </div>
         </footer>

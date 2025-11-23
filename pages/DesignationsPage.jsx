@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchDesignations } from "../src/store/slices/designationSlice";
+import PageHeader from "../src/components/PageHeader";
 import UpdateDesignationModal from "../src/components/UpdateDesignationModal";
 import Footer from "../components/footer";
 
@@ -26,36 +27,7 @@ const DesignationsPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header - Same as EmployeesPage */}
-      <header className="bg-gray-900 text-white shadow-md">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-8">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-white rounded flex items-center justify-center">
-                <span className="text-gray-900 font-bold text-sm">HR</span>
-              </div>
-              <h1 className="text-xl font-bold">HRMS</h1>
-            </div>
-            <nav className="hidden md:flex items-center gap-6 text-sm">
-              <a href="/hr-dashboard" className="hover:text-gray-300">Dashboard</a>
-              <a href="/employees" className="hover:text-gray-300">Employees</a>
-              <a href="/recruitment/candidates" className="hover:text-gray-300">Candidates</a>
-              <a href="/departments" className="hover:text-gray-300">Departments</a>
-              <a href="/designations" className="text-white font-semibold border-b-2 border-white pb-1">
-                Designations
-              </a>
-              <a href="/reports" className="hover:text-gray-300">Reports</a>
-              <a href="/payroll" className="hover:text-gray-300">Payroll</a>
-            </nav>
-          </div>
-          <div className="flex items-center gap-3">
-            <span className="text-sm">John Doe</span>
-            <div className="w-10 h-10 bg-teal-500 rounded-full flex items-center justify-center text-white font-semibold">
-              JD
-            </div>
-          </div>
-        </div>
-      </header>
+      <PageHeader />
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-6 py-8">
