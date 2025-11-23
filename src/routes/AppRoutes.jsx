@@ -15,6 +15,7 @@ import ComplaintsPage from "../../pages/ComplaintsPage";
 import CandidatesPage from "../../pages/CandidatesPage";
 import PayrollPage from "../../pages/PayrollPage";
 import ReportsPage from "../../pages/ReportsPage";
+import LeavesPage from "../../pages/LeavesPage";
 
 const { PUBLIC, PROTECTED } = ROUTE_PATHS;
 
@@ -229,6 +230,20 @@ const ProtectedRoutes = () => {
             }
           />
         </>
+      )}
+
+      {user?.department === DEPARTMENTS.HR && (
+        <Route
+          path={PROTECTED.LEAVES}
+          element={
+            <ProtectedRoute
+              allowedDepartments={[DEPARTMENTS.HR]}
+              routePath={PROTECTED.LEAVES}
+            >
+              <LeavesPage />
+            </ProtectedRoute>
+          }
+        />
       )}
 
       <Route

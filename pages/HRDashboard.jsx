@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
 import { fetchDashboard } from '../src/store/slices/dashboardSlice';
 import { ROUTE_PATHS } from '../src/constants/routePaths';
 import { API_ENDPOINTS, API_BASE_URL } from '../src/constants/apiEndpoints';
@@ -39,6 +39,17 @@ const HRDashboard = () => {
     pending_leaves: Array.isArray(data.pending_leaves)
       ? data.pending_leaves
       : [],
+    // Handle new hires trend data
+    new_hires_trend: Array.isArray(data.new_hires_trend)
+      ? data.new_hires_trend
+      : [],
+    new_hires_growth_percent: typeof data.new_hires_growth_percent === 'number'
+      ? data.new_hires_growth_percent
+      : undefined,
+    // Handle pending leaves as object or array
+    pending_leaves_data: typeof data.pending_leaves === 'object' && !Array.isArray(data.pending_leaves)
+      ? data.pending_leaves
+      : {},
     // Transform employees_per_department to use consistent field name
     employees_per_department: Array.isArray(data.employees_per_department)
       ? data.employees_per_department.map(dept => ({
@@ -106,9 +117,165 @@ const HRDashboard = () => {
 
   const pendingLeavesCount = typeof data?.pending_leaves === 'number'
     ? data.pending_leaves
+    : typeof data?.pending_leaves === 'object' && !Array.isArray(data?.pending_leaves)
+    ? (data.pending_leaves?.total || 0)
     : pendingLeaves.length;
 
+  // Extract chart data
+  const newHiresTrend = safeData?.new_hires_trend || [];
+  const newHiresGrowth = safeData?.new_hires_growth_percent;
+  const pendingLeavesData = safeData?.pending_leaves_data || {};
+
   const COLORS = ['#10b981', '#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444', '#06b6d4'];
+
+  // New Hires Trend Chart Component
+  const NewHiresTrendChart = ({ trendData, count, growthPercent }) => {
+    // Transform trend data for Recharts
+    const chartData = (trendData || []).map((value, index) => ({
+      day: index + 1,
+      hires: value
+    }));
+
+    return (
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="flex items-start justify-between mb-4">
+          <div className="flex-1">
+            <div className="flex items-center gap-2 text-teal-600 mb-2">
+              <UserPlus className="w-5 h-5" />
+              <span className="text-sm font-semibold">New Hires</span>
+            </div>
+            <p className="text-4xl font-bold text-gray-900">{count || 0}</p>
+            <p className="text-sm text-gray-600 mt-1">employees joined recently</p>
+            
+            {growthPercent !== undefined && growthPercent !== 0 && (
+              <div className="mt-3 inline-flex items-center gap-1 bg-teal-50 text-teal-700 px-3 py-1 rounded-full text-sm font-semibold">
+                <TrendingUp className="w-4 h-4" />
+                +{growthPercent}% vs last month
+              </div>
+            )}
+          </div>
+          <span className="px-3 py-1 bg-teal-50 text-teal-700 text-xs font-semibold rounded-full">
+            This Month
+          </span>
+        </div>
+
+        {/* Trend Chart */}
+        <div className="h-24 mt-4">
+          {chartData.length > 0 ? (
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={chartData}>
+                <Line 
+                  type="monotone" 
+                  dataKey="hires" 
+                  stroke="#14b8a6" 
+                  strokeWidth={2}
+                  dot={false}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="h-full flex items-center justify-center text-gray-400 text-sm">
+              No trend data available
+            </div>
+          )}
+        </div>
+
+        <button 
+          onClick={() => navigate(ROUTE_PATHS.PROTECTED.EMPLOYEES)}
+          className="mt-4 w-full text-center text-sm text-teal-600 hover:text-teal-700 font-semibold transition-colors"
+        >
+          View All Employees →
+        </button>
+      </div>
+    );
+  };
+
+  // Pending Leaves Donut Chart Component
+  const PendingLeavesChart = ({ leavesData }) => {
+    const { total = 0, sick = 0, casual = 0, annual = 0 } = leavesData || {};
+    
+    const chartData = [
+      { name: 'Sick', value: sick, color: '#ef4444' },      // Red
+      { name: 'Casual', value: casual, color: '#f59e0b' },  // Orange
+      { name: 'Annual', value: annual, color: '#3b82f6' },  // Blue
+    ].filter(item => item.value > 0);  // Only show non-zero values
+
+    const calculatePercentage = (value) => {
+      if (total === 0) return 0;
+      return Math.round((value / total) * 100);
+    };
+
+    return (
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="flex items-start justify-between mb-4">
+          <div className="flex items-center gap-2 text-teal-600">
+            <Calendar className="w-5 h-5" />
+            <span className="text-sm font-semibold">Pending Leaves</span>
+          </div>
+          <span className="px-3 py-1 bg-orange-100 text-orange-700 text-xs font-semibold rounded-full">
+            Action Required
+          </span>
+        </div>
+
+        {total === 0 ? (
+          <div className="py-12 text-center">
+            <p className="text-gray-500 text-sm">No pending leave requests</p>
+          </div>
+        ) : (
+          <div className="flex items-center justify-between gap-6">
+            {/* Donut Chart */}
+            <div className="relative" style={{ width: '140px', height: '140px' }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={chartData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={45}
+                    outerRadius={65}
+                    paddingAngle={2}
+                    dataKey="value"
+                  >
+                    {chartData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+              {/* Center Text */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <span className="text-3xl font-bold text-gray-900">{total}</span>
+                <span className="text-xs text-gray-500 uppercase">Total</span>
+              </div>
+            </div>
+
+            {/* Legend */}
+            <div className="flex-1 space-y-2">
+              {chartData.map((item) => (
+                <div key={item.name} className="flex items-center justify-between text-sm">
+                  <div className="flex items-center gap-2">
+                    <div 
+                      className="w-3 h-3 rounded-full" 
+                      style={{ backgroundColor: item.color }}
+                    />
+                    <span className="text-gray-700">{item.name}</span>
+                  </div>
+                  <span className="text-gray-500">({calculatePercentage(item.value)}%)</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <button 
+          onClick={() => navigate(ROUTE_PATHS.PROTECTED.LEAVES)}
+          className="mt-6 w-full text-center text-sm text-teal-600 hover:text-teal-700 font-semibold transition-colors"
+        >
+          Review Applications →
+        </button>
+      </div>
+    );
+  };
 
   // Metric Cards Component
   const MetricCard = ({ icon: Icon, title, value, subtitle, trend, bgAccent, iconBg }) => (
@@ -225,108 +392,17 @@ const HRDashboard = () => {
 
       {/* Second Row - Analytics Section (2 Cards) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        {/* New Hires This Month */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-bold text-gray-800 flex items-center">
-              <UserPlus className="w-5 h-5 mr-2 text-green-600" />
-              New Hires This Month
-            </h3>
-            <span className="text-sm text-gray-500">{newHiresCount} employees</span>
-          </div>
-          {newHires.length === 0 ? (
-            <div className="text-center py-8">
-              <p className="text-gray-500 text-sm">
-                {newHiresCount > 0
-                  ? `${newHiresCount} new hire${newHiresCount !== 1 ? 's' : ''} this month`
-                  : "No new hires this month"}
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-3 max-h-80 overflow-y-auto">
-              {newHires.map(hire => (
-                <div key={hire.id} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                  <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
-                    {hire.initials || hire.name?.substring(0, 2).toUpperCase() || '??'}
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-semibold text-gray-800 text-sm">{hire.name || 'Unknown'}</p>
-                    <p className="text-xs text-gray-500">{hire.department || 'N/A'}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-xs text-gray-600">{hire.join_date || hire.joinDate || 'N/A'}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-          <button
-            className="mt-4 w-full text-center text-sm text-green-600 hover:text-green-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={newHiresCount === 0}
-            onClick={show_employees}>
-            View All Employees →
-          </button>
-        </div>
+        {/* New Hires Trend Chart */}
+        <NewHiresTrendChart 
+          trendData={newHiresTrend}
+          count={newHiresCount}
+          growthPercent={newHiresGrowth}
+        />
 
-        {/* Pending Leave Approvals */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-bold text-gray-800 flex items-center">
-              <Calendar className="w-5 h-5 mr-2 text-green-600" />
-              Pending Leave Approvals
-            </h3>
-            <span className="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-semibold">
-              {pendingLeavesCount} Pending
-            </span>
-          </div>
-          {pendingLeaves.length === 0 ? (
-            <div className="text-center py-8">
-              <p className="text-gray-500 text-sm">
-                {pendingLeavesCount > 0
-                  ? `${pendingLeavesCount} pending leave application${pendingLeavesCount !== 1 ? 's' : ''}`
-                  : "No pending leave requests"}
-              </p>
-
-            </div>
-          ) : (
-            <div className="space-y-3 max-h-80 overflow-y-auto">
-              {pendingLeaves.map(leave => (
-                <div key={leave.id} className="p-3 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
-                  <div className="flex items-start justify-between mb-2">
-                    <div>
-                      <p className="font-semibold text-gray-800 text-sm">
-                        {leave.employee_name || leave.employeeName || 'Unknown Employee'}
-                      </p>
-                      <p className="text-xs text-gray-600">
-                        {leave.leave_type || leave.leaveType || 'Leave'}
-                      </p>
-                    </div>
-                    <span className="text-xs text-gray-500">
-                      {leave.days || 0} day(s)
-                    </span>
-                  </div>
-                  <p className="text-xs text-gray-500 mb-2">
-                    {leave.date_range || leave.dateRange || 'N/A'}
-                  </p>
-                  <div className="flex space-x-2">
-                    <button className="flex-1 px-3 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700 transition-colors">
-                      Approve
-                    </button>
-                    <button className="flex-1 px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700 transition-colors">
-                      Reject
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-          <button
-            className="mt-4 w-full text-center text-sm text-green-600 hover:text-green-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={pendingLeavesCount === 0}
-          >
-            View All Applications →
-          </button>
-        </div>
+        {/* Pending Leaves Donut Chart */}
+        <PendingLeavesChart 
+          leavesData={pendingLeavesData}
+        />
       </div>
 
       {/* Third Row - Charts Section */}
@@ -514,35 +590,14 @@ const HRDashboard = () => {
             <span>Manage Attendance</span>
           </button>
 
-          {/* Manage Leaves - with submenu */}
-          <div>
-            <button
-              onClick={() => toggleSubmenu('leaves')}
-              className="flex items-center justify-between w-full px-6 py-3 hover:bg-green-700 transition-colors"
-            >
-              <div className="flex items-center">
-                <Calendar className="w-5 h-5 mr-3" />
-                <span>Manage Leaves</span>
-              </div>
-              {expandedMenus.leaves ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-            </button>
-            {expandedMenus.leaves && (
-              <div className="bg-gray-800 bg-opacity-50">
-                <button
-                  onClick={() => handleNavigation('leave-types')}
-                  className={`flex items-center w-full px-12 py-2 hover:bg-gray-800 transition-colors text-sm ${activePage === 'leave-types' ? 'bg-gray-800' : ''}`}
-                >
-                  Leave Types
-                </button>
-                <button
-                  onClick={() => handleNavigation('leave-applications')}
-                  className={`flex items-center w-full px-12 py-2 hover:bg-gray-800 transition-colors text-sm ${activePage === 'leave-applications' ? 'bg-gray-800' : ''}`}
-                >
-                  Leave Applications
-                </button>
-              </div>
-            )}
-          </div>
+          {/* Manage Leaves */}
+          <button
+            onClick={() => navigate(ROUTE_PATHS.PROTECTED.LEAVES)}
+            className="flex items-center w-full px-6 py-3 hover:bg-gray-800 transition-colors"
+          >
+            <Calendar className="w-5 h-5 mr-3" />
+            <span>Manage Leaves</span>
+          </button>
 
           {/* Manage Insurance - with submenu */}
           <div>

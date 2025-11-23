@@ -256,6 +256,35 @@ export const API_ENDPOINTS = {
      */
     add: () => "/api/add_complain/",
   },
+  leaves: {
+    /**
+     * Fetch all leave types.
+     * @returns {string} Leaves list endpoint.
+     */
+    list: () => "/api/leaves/all/",
+    /**
+     * Add a new leave type.
+     * @returns {string} Leave type creation endpoint.
+     */
+    add: () => "/api/add_leave/",
+    /**
+     * Fetch all employees on leave.
+     * @returns {string} Employees on leave endpoint.
+     */
+    employees: () => "/api/leaves/employees/",
+    /**
+     * Update leave status for an employee.
+     * @param {number|string} employeeId - Employee identifier.
+     * @returns {string} Leave update endpoint.
+     */
+    edit: (employeeId) => `/api/edit-leaves/${employeeId}/`,
+    /**
+     * Apply for leave for an employee.
+     * @param {number|string} employeeId - Employee identifier.
+     * @returns {string} Leave application endpoint.
+     */
+    apply: (employeeId) => `/api/apply-leaves/${employeeId}/`,
+  },
 };
 
 export default API_ENDPOINTS;

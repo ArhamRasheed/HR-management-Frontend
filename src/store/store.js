@@ -8,6 +8,7 @@ import attendanceReducer from "./slices/attendanceSlice";
 import complaintReducer from "./slices/complaintSlice";
 import candidateReducer from "./slices/candidateSlice";
 import reportReducer from "./slices/reportSlice";
+import leaveReducer from "./slices/leaveSlice";
 
 /**
  * Root Redux store configuration.
@@ -23,6 +24,7 @@ export const store = configureStore({
     complaints: complaintReducer,
     candidates: candidateReducer,
     reports: reportReducer,
+    leaves: leaveReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
