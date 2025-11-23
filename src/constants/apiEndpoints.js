@@ -209,6 +209,21 @@ export const API_ENDPOINTS = {
      * @returns {string} Payroll report endpoint.
      */
     payroll: () => "/api/reports/payroll/",
+    /**
+     * List all reports with filtering options.
+     * @returns {string} Reports list endpoint.
+     */
+    list: () => "/api/report/",
+    /**
+     * Generate a new report.
+     * @returns {string} Report generation endpoint.
+     */
+    generate: () => "/api/add_report/",
+    /**
+     * Download a specific report by file path.
+     * @returns {string} Report download endpoint.
+     */
+    download: () => "/api/download/",
   },
   attendance: {
     /**
