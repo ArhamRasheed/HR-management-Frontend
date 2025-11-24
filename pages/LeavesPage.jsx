@@ -250,16 +250,16 @@ const LeavesPage = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex gap-2">
+                      <div className="flex gap-3">
                         <button
                           onClick={() => handleViewEmployees(leave)}
-                          className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700 transition-colors"
+                          className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-md shadow-sm transition-all duration-200 ease-in-out hover:shadow-md active:scale-95"
                         >
                           View All Employees
                         </button>
                         <button
                           onClick={() => handleApplyLeave(leave)}
-                          className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded hover:bg-green-700 transition-colors"
+                          className="px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-md shadow-sm transition-all duration-200 ease-in-out hover:shadow-md active:scale-95"
                         >
                           Apply Leave
                         </button>

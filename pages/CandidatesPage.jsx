@@ -151,7 +151,7 @@ const CandidatesPage = () => {
                 placeholder="Search by name or email..."
                 value={searchQuery}
                 onChange={(e) => dispatch(setSearchQuery(e.target.value))}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2 pl-10 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full border border-gray-300 rounded-lg px-4 py-2 pl-10 text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
             </div>
 

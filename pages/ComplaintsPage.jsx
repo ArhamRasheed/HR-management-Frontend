@@ -126,7 +126,7 @@ const ComplaintsPage = () => {
                 placeholder="Search by ID, employee or title..."
                 value={searchQuery}
                 onChange={(e) => dispatch(setSearchQuery(e.target.value))}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2 pl-10 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full border border-gray-300 rounded-lg px-4 py-2 pl-10 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </div>
 

@@ -226,7 +226,7 @@ const EmployeesOnLeaveModal = ({ isOpen, onClose, leaveTypeName, leaveTypeId, on
                           <button
                             onClick={() => handleUpdate(employee)}
                             disabled={!canUpdateLeave(employee.status, employee.start_date)}
-                            className="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="px-4 py-2 text-sm font-semibold text-gray-900 bg-gray-100 border border-gray-300 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-500"
                           >
                             Update
                           </button>
@@ -242,7 +242,7 @@ const EmployeesOnLeaveModal = ({ isOpen, onClose, leaveTypeName, leaveTypeId, on
             <div className="mt-6 flex justify-end">
               <button
                 onClick={onClose}
-                className="px-6 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                className="px-6 py-2.5 text-sm font-bold text-white bg-gray-800 border-2 border-gray-900 rounded-lg hover:bg-gray-900 transition-colors shadow-md"
               >
                 Close
               </button>
