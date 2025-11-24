@@ -453,7 +453,7 @@ const HRDashboard = () => {
             <p className="text-3xl font-bold text-gray-900">
               PKR {(safeData?.total_payroll || 0).toLocaleString()}
             </p>
-            <p className="text-sm text-gray-500">Total Payroll This Month</p>
+            <p className="text-sm text-gray-500">Total Payroll</p>
           </div>
           {payrollByDept.length === 0 || totalPayroll === 0 ? (
             <div className="h-[250px] flex items-center justify-center">
