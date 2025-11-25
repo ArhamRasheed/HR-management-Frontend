@@ -25,23 +25,17 @@ const LoginPage = () => {
   );
 
   useEffect(() => {
-    console.log('🔑 LOGINPAGE - useEffect triggered');
-    console.log('🔑 LOGINPAGE - Auth state:', { isAuthenticated, user, userDepartment: user?.department });
-    
+
     if (isAuthenticated) {
       const target = getDefaultRoute(user?.department);
-      console.log('🔑 LOGINPAGE - User is authenticated');
-      console.log('🔑 LOGINPAGE - Target route:', target);
-      console.log('🔑 LOGINPAGE - User department:', user?.department);
-      console.log('🔑 LOGINPAGE - Starting redirect timer (650ms)...');
-      
+
+
       const redirectTimer = setTimeout(() => {
-        console.log('🔑 LOGINPAGE - Redirect timer fired, navigating to:', target);
+
         navigate(target, { replace: true });
       }, 650);
-      
+
       return () => {
-        console.log('🔑 LOGINPAGE - Cleaning up redirect timer');
         clearTimeout(redirectTimer);
       };
     }

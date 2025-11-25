@@ -102,7 +102,6 @@ const EmployeesPage = () => {
   };
 
   const handleSeeDetails = async (employeeId) => {
-    console.log("handleSeeDetails called with ID:", employeeId);
     setEmployeeDetailLoading(true);
     setEmployeeDetailError(null);
     setIsModalOpen(true);
