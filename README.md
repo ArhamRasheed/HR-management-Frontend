@@ -1,18 +1,40 @@
-# React + Vite
+# HR Management System — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The frontend interface for the HR Management platform, built with JavaScript and a modern component-based architecture.
 
-Currently, two official plugins are available:
+## 🔧 Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Language:** JavaScript
+- **Framework:** React
+- **Styling:** CSS / Tailwind
+- **API Integration:** Axios / Fetch
 
-## React Compiler
+## 🚀 Features
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+- Clean dashboard for HR managers
+- Employee directory & profile management
+- Attendance & payroll views
+- Responsive design
+- Integrated with backend REST API
 
-Note: This will impact Vite dev & build performances.
+## 📦 Getting Started
 
-## Expanding the ESLint configuration
+```bash
+# Clone the repo
+git clone https://github.com/ArhamRasheed/HR-management-Frontend.git
+cd HR-management-Frontend
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+# Install dependencies
+npm install
+
+# Start the dev server
+npm run dev
+```
+
+## 🔗 Related
+
+- [Backend Repo](https://github.com/ArhamRasheed/HR-management-Backend)
+
+---
+
+Built by [Arham Rasheed](https://github.com/ArhamRasheed)
