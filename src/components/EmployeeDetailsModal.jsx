@@ -18,10 +18,12 @@ const EmployeeDetailsModal = ({ isOpen, onClose, employee, loading, error }) => 
     const statusConfig = {
       active: { bg: "bg-green-100", text: "text-green-800", label: "Active" },
       Active: { bg: "bg-green-100", text: "text-green-800", label: "Active" },
-      on_leave: { bg: "bg-yellow-100", text: "text-yellow-800", label: "On Leave" },
-      "On Leave": { bg: "bg-yellow-100", text: "text-yellow-800", label: "On Leave" },
+      fired: { bg: "bg-orange-100", text: "text-yellow-800", label: "Fired" },
+      Fired: { bg: "bg-orange-100", text: "text-yellow-800", label: "Fired" },
       terminated: { bg: "bg-red-100", text: "text-red-800", label: "Terminated" },
       Terminated: { bg: "bg-red-100", text: "text-red-800", label: "Terminated" },
+      resigned: { bg: "bg-yellow-100", text: "text-red-800", label: "Resigned" },
+      Resigned: { bg: "bg-yellow-100", text: "text-red-800", label: "Resigned" }
     };
     const config = statusConfig[status] || statusConfig.active;
     return (

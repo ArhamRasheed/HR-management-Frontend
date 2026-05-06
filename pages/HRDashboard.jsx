@@ -361,7 +361,7 @@ const HRDashboard = () => {
   const DashboardContent = () => (
     <>
       {/* Top Row - Key Metrics (4 Cards) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
         <MetricCard
           icon={Users}
           title="Total Active Employees"
@@ -384,23 +384,7 @@ const HRDashboard = () => {
           iconBg="bg-red-50"
         />
 
-        <MetricCard
-          icon={Shield}
-          title="Active Insurance Policies"
-          value={(safeData?.total_insurances || 0).toString()}
-          subtitle={
-            safeData?.total_insurances ? (
-              <>
-                • Health <br />
-                • Life <br />
-                • Vehicle
-              </>
-            ) : (
-              "No active policies"
-            )
-          }
-          className="whitespace-pre-line"
-        />
+        
       </div>
 
       {/* Second Row - Analytics Section (2 Cards) */}
@@ -480,9 +464,7 @@ const HRDashboard = () => {
               </PieChart>
             </ResponsiveContainer>
           )}
-          <button className="mt-4 w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium">
-            View Detailed Report
-          </button>
+          
         </div>
       </div>
     </>
@@ -660,14 +642,7 @@ const HRDashboard = () => {
             <span>Contact</span>
           </button>
 
-          {/* Settings */}
-          <button
-            onClick={() => handleNavigation('settings')}
-            className={`flex items-center w-full px-6 py-3 hover:bg-gray-800 transition-colors ${activePage === 'settings' ? 'bg-gray-800 border-l-4 border-teal-500' : ''}`}
-          >
-            <Settings className="w-5 h-5 mr-3" />
-            <span>Settings</span>
-          </button>
+          
         </nav>
       </aside>
 
