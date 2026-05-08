@@ -256,6 +256,13 @@ export const API_ENDPOINTS = {
      */
     add: () => "/api/add_complain/",
   },
+  benchmark: {
+    /**
+     * Run the live performance benchmark suite.
+     * @returns {string} Benchmark endpoint.
+     */
+    run: () => "/api/benchmark/",
+  },
   leaves: {
     /**
      * Fetch all leave types.

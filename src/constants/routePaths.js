@@ -25,6 +25,7 @@ export const ROUTE_PATHS = Object.freeze({
     PROFILE: "/profile",
     CONTACT: "/contact",
     ABOUT: "/about",
+    BENCHMARK: "/benchmark",
   },
 });
 

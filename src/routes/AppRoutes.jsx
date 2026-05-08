@@ -16,6 +16,7 @@ import CandidatesPage from "../../pages/CandidatesPage";
 import PayrollPage from "../../pages/PayrollPage";
 import ReportsPage from "../../pages/ReportsPage";
 import LeavesPage from "../../pages/LeavesPage";
+import BenchmarkPage from "../../pages/BenchmarkPage";
 
 const { PUBLIC, PROTECTED } = ROUTE_PATHS;
 
@@ -251,6 +252,14 @@ const ProtectedRoutes = () => {
         element={
           <ProtectedRoute routePath={PROTECTED.PAYROLL_HISTORY}>
             <ComingSoonPage title="Payroll History" />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={PROTECTED.BENCHMARK}
+        element={
+          <ProtectedRoute routePath={PROTECTED.BENCHMARK}>
+            <BenchmarkPage />
           </ProtectedRoute>
         }
       />

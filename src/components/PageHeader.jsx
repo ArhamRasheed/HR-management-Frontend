@@ -18,6 +18,7 @@ const PageHeader = () => {
     { path: "/complaints", label: "Complaints" },
     { path: "/reports", label: "Reports" },
     { path: "/payroll", label: "Payroll" },
+    { path: "/benchmark", label: "Benchmark" },
   ];
 
   const isActive = (path) => {
